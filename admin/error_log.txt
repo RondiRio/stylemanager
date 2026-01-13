@@ -1,0 +1,252 @@
+[08-Jan-2026 18:43:49 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:51 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:52 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:52 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:53 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:53 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:53 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:53 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:53 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:53 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:53 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:54 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:54 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:43:54 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:44:09 UTC] PHP Warning:  Undefined variable $agendamentos_hoje in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 273
+[08-Jan-2026 18:44:09 UTC] PHP Warning:  Undefined variable $total_profissionais in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 284
+[08-Jan-2026 18:44:09 UTC] PHP Warning:  Undefined variable $total_clientes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 285
+[08-Jan-2026 18:44:09 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:44:09 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:09 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:44:09 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:09 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:44:09 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:09 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:44:19 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:62
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(62): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 62
+[08-Jan-2026 18:44:29 UTC] PHP Warning:  Undefined variable $agendamentos_hoje in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 273
+[08-Jan-2026 18:44:29 UTC] PHP Warning:  Undefined variable $total_profissionais in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 284
+[08-Jan-2026 18:44:29 UTC] PHP Warning:  Undefined variable $total_clientes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 285
+[08-Jan-2026 18:44:29 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:44:29 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:29 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:44:29 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:29 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:44:29 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:29 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:44:43 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:44:43 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:43 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:44:43 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:43 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:44:43 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:43 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:44:44 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:44:44 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:44 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:44:44 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:44 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:44:44 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:44 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:44:55 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:44:55 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:55 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:44:55 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:55 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:44:55 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:55 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:44:56 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:44:56 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:56 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:44:56 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:56 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:44:56 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:56 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:44:56 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:44:56 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:56 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:44:56 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:56 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:44:56 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:44:56 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:45:06 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:135
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(135): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 135
+[08-Jan-2026 18:45:11 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:45:11 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:45:11 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:45:11 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:45:11 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:45:11 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:45:11 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:45:20 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:45:20 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:45:20 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:45:20 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:45:20 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:45:20 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:45:20 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:50:01 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:50:01 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:50:01 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:50:01 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:50:01 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:50:01 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:50:01 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:50:12 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:50:12 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:50:12 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:50:12 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:50:12 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:50:12 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:50:12 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:57:38 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:53
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 53
+[08-Jan-2026 18:57:44 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:57:44 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:57:44 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:57:44 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:57:44 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:57:44 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:57:44 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 18:57:51 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:62
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(62): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 62
+[08-Jan-2026 18:57:56 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 18:57:56 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:57:56 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 18:57:56 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:57:56 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 18:57:56 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 18:57:56 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 19:02:16 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 19:02:16 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 19:02:16 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 19:02:16 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 19:02:16 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 19:02:16 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 19:02:16 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 19:02:38 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 297
+[08-Jan-2026 19:02:38 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 19:02:38 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 299
+[08-Jan-2026 19:02:38 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 19:02:38 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 19:02:38 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 19:02:38 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 322
+[08-Jan-2026 19:08:10 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:08:10 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 298
+[08-Jan-2026 19:08:10 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 19:08:10 UTC] PHP Warning:  Undefined variable $faturamento_mes_servicos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 300
+[08-Jan-2026 19:08:10 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 19:08:10 UTC] PHP Warning:  Undefined variable $faturamento_mes_produtos in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 301
+[08-Jan-2026 19:08:10 UTC] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/includes/utils.php on line 4
+[08-Jan-2026 19:08:10 UTC] PHP Warning:  Undefined variable $faturamento_total_mes in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 323
+[08-Jan-2026 19:08:56 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:08:56 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:54
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(54): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 54
+[08-Jan-2026 19:08:57 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:08:57 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:54
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(54): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 54
+[08-Jan-2026 19:08:58 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:08:58 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:54
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(54): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 54
+[08-Jan-2026 19:08:58 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:08:58 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:54
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(54): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 54
+[08-Jan-2026 19:08:58 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:08:58 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php:54
+Stack trace:
+#0 /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php(54): PDOStatement->execute()
+#1 {main}
+  thrown in /home/u386384816/domains/lightpink-mouse-943221.hostingersite.com/public_html/admin/dashboard.php on line 54
+[08-Jan-2026 19:09:48 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:10:44 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:11:34 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:11:35 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:11:36 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:41:58 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:48:04 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:48:35 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:48:39 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 19:48:40 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 20:23:18 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[08-Jan-2026 20:23:58 UTC] TESTE DE LOG: O sistema de logs está funcionando!
+[13-Jan-2026 02:03:05 Europe/Berlin] TESTE DE LOG: O sistema de logs está funcionando!

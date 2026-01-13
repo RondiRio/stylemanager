@@ -1,0 +1,689 @@
+/**
+ * COMPONENTES VISUAIS - SISTEMA DE SALÃO
+ * Design moderno com identidade de beleza e elegância
+ */
+
+/* ================================
+   VARIÁVEIS GLOBAIS
+================================ */
+:root {
+    --salao-espacamento: 1.5rem;
+    --salao-radius: 16px;
+    --salao-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --salao-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --salao-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+    --salao-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ================================
+   RESET E BASE
+================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    color: #2d3748;
+    background-color: var(--cor-fundo);
+}
+
+/* ================================
+   CARDS GLASSMORPHISM (MODERNO)
+================================ */
+.card-glass {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: var(--salao-radius);
+    box-shadow: var(--salao-shadow-md);
+    padding: var(--salao-espacamento);
+    transition: var(--salao-transition);
+}
+
+.card-glass:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--salao-shadow-lg);
+    border-color: var(--cor-secundaria);
+}
+
+.card-glass-header {
+    background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
+    color: white;
+    padding: 1.5rem;
+    margin: calc(-1 * var(--salao-espacamento));
+    margin-bottom: var(--salao-espacamento);
+    border-radius: var(--salao-radius) var(--salao-radius) 0 0;
+}
+
+/* ================================
+   BOTÕES ELEGANTES
+================================ */
+.btn-salao {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 12px 30px;
+    background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: var(--salao-transition);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-salao:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+    filter: brightness(1.1);
+}
+
+.btn-salao:active {
+    transform: translateY(-1px);
+}
+
+.btn-salao-outline {
+    background: transparent;
+    border: 2px solid var(--cor-primaria);
+    color: var(--cor-primaria);
+    box-shadow: none;
+}
+
+.btn-salao-outline:hover {
+    background: var(--cor-primaria);
+    color: white;
+}
+
+/* Botão com ícone */
+.btn-salao i,
+.btn-salao svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ================================
+   AVATAR ELEGANTE
+================================ */
+.avatar-salao {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--cor-secundaria);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: var(--salao-transition);
+    cursor: pointer;
+}
+
+.avatar-salao:hover {
+    transform: scale(1.1);
+    border-color: var(--cor-primaria);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.avatar-salao-lg {
+    width: 100px;
+    height: 100px;
+    border-width: 4px;
+}
+
+.avatar-salao-sm {
+    width: 35px;
+    height: 35px;
+    border-width: 2px;
+}
+
+/* Avatar com status online */
+.avatar-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.avatar-status {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background: #10b981;
+}
+
+.avatar-status.offline {
+    background: #6b7280;
+}
+
+.avatar-status.busy {
+    background: #ef4444;
+}
+
+/* ================================
+   INPUTS MODERNOS
+================================ */
+.input-salao {
+    width: 100%;
+    padding: 14px 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: var(--salao-transition);
+    background: white;
+    font-family: inherit;
+}
+
+.input-salao:focus {
+    outline: none;
+    border-color: var(--cor-secundaria);
+    box-shadow: 0 0 0 4px rgba(240, 98, 146, 0.1);
+    background: #fefefe;
+}
+
+.input-salao::placeholder {
+    color: #9ca3af;
+}
+
+/* Input com ícone */
+.input-group-salao {
+    position: relative;
+}
+
+.input-group-salao i,
+.input-group-salao svg {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    width: 20px;
+    height: 20px;
+}
+
+.input-group-salao .input-salao {
+    padding-left: 50px;
+}
+
+/* ================================
+   BADGES E TAGS
+================================ */
+.badge-salao {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.badge-disponivel {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.badge-ocupado {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+}
+
+.badge-ausente {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.badge-agendado {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+/* Badge com pulse */
+.badge-pulse {
+    animation: pulse-badge 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-badge {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* ================================
+   TIMELINE DE AGENDAMENTOS
+================================ */
+.timeline-salao {
+    position: relative;
+    padding-left: 50px;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 30px;
+    margin-bottom: 20px;
+}
+
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -39px;
+    top: 0;
+    bottom: -20px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--cor-primaria), var(--cor-secundaria));
+}
+
+.timeline-item:last-child::before {
+    display: none;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -50px;
+    top: 5px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--cor-secundaria);
+    border: 4px solid white;
+    box-shadow: 0 0 0 3px rgba(240, 98, 146, 0.2);
+    z-index: 1;
+}
+
+.timeline-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--salao-shadow-sm);
+    transition: var(--salao-transition);
+}
+
+.timeline-content:hover {
+    box-shadow: var(--salao-shadow-md);
+    transform: translateX(5px);
+}
+
+.timeline-time {
+    display: inline-block;
+    background: var(--cor-secundaria);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* ================================
+   CARDS DE SERVIÇO
+================================ */
+.servico-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--salao-radius);
+    background: white;
+    box-shadow: var(--salao-shadow-sm);
+    transition: var(--salao-transition);
+    cursor: pointer;
+}
+
+.servico-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.servico-card:hover::before {
+    left: 100%;
+}
+
+.servico-card:hover {
+    transform: scale(1.05);
+    box-shadow: var(--salao-shadow-lg);
+}
+
+.servico-card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.servico-card-body {
+    padding: 20px;
+}
+
+.servico-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--cor-primaria);
+    margin-bottom: 8px;
+}
+
+.servico-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.servico-duracao {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.servico-preco {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--cor-secundaria);
+}
+
+/* ================================
+   LOADING STATES
+================================ */
+.loading-salao {
+    position: relative;
+    min-height: 200px;
+    background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+    background-size: 200% 100%;
+    animation: shimmer-salao 1.5s infinite;
+    border-radius: var(--salao-radius);
+}
+
+@keyframes shimmer-salao {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Skeleton específico */
+.skeleton-text {
+    height: 16px;
+    background: #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.skeleton-text.short { width: 60%; }
+.skeleton-text.medium { width: 80%; }
+.skeleton-text.long { width: 100%; }
+
+.skeleton-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #e5e7eb;
+}
+
+/* ================================
+   MODAIS ELEGANTES
+================================ */
+.modal.show .modal-dialog {
+    animation: slideInDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    border: none;
+    border-radius: var(--salao-radius);
+    box-shadow: var(--salao-shadow-lg);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
+    color: white;
+    border-radius: var(--salao-radius) var(--salao-radius) 0 0;
+    padding: 1.5rem;
+    border-bottom: none;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+/* ================================
+   ALERTS PERSONALIZADOS
+================================ */
+.alert-salao {
+    padding: 16px 20px;
+    border-radius: 12px;
+    border-left: 4px solid;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.alert-salao.success {
+    background: #d1fae5;
+    border-left-color: #10b981;
+    color: #065f46;
+}
+
+.alert-salao.error {
+    background: #fee2e2;
+    border-left-color: #ef4444;
+    color: #991b1b;
+}
+
+.alert-salao.info {
+    background: #dbeafe;
+    border-left-color: #3b82f6;
+    color: #1e40af;
+}
+
+.alert-salao.warning {
+    background: #fef3c7;
+    border-left-color: #f59e0b;
+    color: #92400e;
+}
+
+/* ================================
+   TABELAS ELEGANTES
+================================ */
+.table-salao {
+    width: 100%;
+    background: white;
+    border-radius: var(--salao-radius);
+    overflow: hidden;
+    box-shadow: var(--salao-shadow-sm);
+}
+
+.table-salao thead {
+    background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
+    color: white;
+}
+
+.table-salao th {
+    padding: 16px;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+.table-salao td {
+    padding: 16px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.table-salao tbody tr {
+    transition: var(--salao-transition);
+}
+
+.table-salao tbody tr:hover {
+    background: #f9fafb;
+    transform: scale(1.01);
+}
+
+/* ================================
+   RATING (ESTRELAS)
+================================ */
+.rating-salao {
+    display: inline-flex;
+    gap: 4px;
+}
+
+.rating-salao .star {
+    color: #fbbf24;
+    font-size: 20px;
+    transition: var(--salao-transition);
+}
+
+.rating-salao .star.empty {
+    color: #d1d5db;
+}
+
+.rating-salao:hover .star {
+    transform: scale(1.1);
+}
+
+/* ================================
+   PROGRESS BAR
+================================ */
+.progress-salao {
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-salao-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cor-primaria), var(--cor-secundaria));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-salao-fill::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: progress-shine 2s infinite;
+}
+
+@keyframes progress-shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* ================================
+   TOOLTIPS
+================================ */
+.tooltip-salao {
+    position: relative;
+    cursor: help;
+}
+
+.tooltip-salao::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    padding: 8px 12px;
+    background: #1f2937;
+    color: white;
+    border-radius: 8px;
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.2s;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.tooltip-salao::after {
+    content: "";
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    border: 6px solid transparent;
+    border-top-color: #1f2937;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.tooltip-salao:hover::before,
+.tooltip-salao:hover::after {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 768px) {
+    :root {
+        --salao-espacamento: 1rem;
+        --salao-radius: 12px;
+    }
+    
+    .btn-salao {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    
+    .timeline-salao {
+        padding-left: 30px;
+    }
+    
+    .timeline-dot {
+        left: -36px;
+        width: 20px;
+        height: 20px;
+    }
+    
+    .servico-card:hover {
+        transform: none;
+    }
+}
