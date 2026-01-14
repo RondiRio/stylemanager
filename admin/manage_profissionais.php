@@ -99,10 +99,3 @@ include '../includes/header.php';
 </style>
 
 <?php include '../includes/footer.php'; ?>
-
-<div class="modal fade" id="modalRemoverProfissional" tabindex="-1" aria-hidden="true">
-    ... (resto do seu modal)
-</div>
-<script>
-    ... (resto do seu script)
-</script>

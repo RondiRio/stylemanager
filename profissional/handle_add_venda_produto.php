@@ -14,7 +14,7 @@ if (empty($produtos)) redirecionar_com_mensagem('view_agenda_dia.php', 'Nenhum p
 
 foreach ($produtos as $prod_id => $dados) {
     $qtd = (int)($dados['qtd'] ?? 0);
-    $preco_unit = str_replace(['R$ ', '.'], ['', ''], $dados['preco']);
+    $preco_unit = str_replace(['R$ ', '.'], ['', ''], $dados['preco'] ?? '0');
     $preco_unit = str_replace(',', '.', $preco_unit);
     if ($qtd <= 0) continue;
 
@@ -25,9 +25,9 @@ foreach ($produtos as $prod_id => $dados) {
     $comissao = $valor_total * $comissao_perc / 100;
 
     $pdo->prepare("
-        INSERT INTO vendas_produto (profissional_id, produto_id, quantidade, valor_total, comissao_produto)
-        VALUES (?, ?, ?, ?, ?)
-    ")->execute([$_SESSION['usuario_id'], $prod_id, $qtd, $valor_total, $comissao]);
+        INSERT INTO vendas_produtos (profissional_id, produto_id, quantidade, valor_unitario, valor_total, comissao_produto)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ")->execute([$_SESSION['usuario_id'], $prod_id, $qtd, $preco_unit, $valor_total, $comissao]);
 }
 
 redirecionar_com_mensagem('view_agenda_dia.php', 'Venda(s) registrada(s) com sucesso!');

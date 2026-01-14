@@ -90,15 +90,16 @@ if ($_POST && !isset($_POST['acao_seguir']) && !isset($_POST['acao_curtir']) && 
         }
 
         // Inserir post
+        $tipo_post = $midia_tipo === 'imagem' ? 'foto' : ($midia_tipo === 'video' ? 'video' : 'texto');
         $stmt = $pdo->prepare("
-            INSERT INTO posts (usuario_id, legenda, imagem, video, criado_em) 
-            VALUES (?, ?, ?, ?, NOW())
+            INSERT INTO posts (usuario_id, tipo, midia_url, legenda)
+            VALUES (?, ?, ?, ?)
         ");
         $stmt->execute([
             $profissional_id,
-            $texto,
-            $midia_tipo === 'imagem' ? $midia_arquivo : null,
-            $midia_tipo === 'video' ? $midia_arquivo : null
+            $tipo_post,
+            $midia_arquivo,
+            $texto
         ]);
 
         $pdo->commit();
@@ -124,7 +125,7 @@ if (isset($_POST['acao_seguir']) && verificar_csrf_token($_POST['csrf_token'] ??
     $pdo->beginTransaction();
     try {
         if ($_POST['acao_seguir'] === 'seguir' && !$ja_segue) {
-            $pdo->prepare("INSERT INTO seguidores (seguidor_id, seguido_id, criado_em) VALUES (?, ?, NOW())")
+            $pdo->prepare("INSERT INTO seguidores (seguidor_id, seguido_id) VALUES (?, ?)")
                 ->execute([$profissional_id, $alvo_id]);
         } elseif ($_POST['acao_seguir'] === 'deixar' && $ja_segue) {
             $pdo->prepare("DELETE FROM seguidores WHERE seguidor_id = ? AND seguido_id = ?")
@@ -156,7 +157,7 @@ if (isset($_POST['acao_curtir']) && verificar_csrf_token($_POST['csrf_token'] ??
             $pdo->prepare("DELETE FROM post_likes WHERE post_id = ? AND usuario_id = ?")
                 ->execute([$post_id, $profissional_id]);
         } else {
-            $pdo->prepare("INSERT INTO post_likes (post_id, usuario_id, criado_em) VALUES (?, ?, NOW())")
+            $pdo->prepare("INSERT INTO post_likes (post_id, usuario_id) VALUES (?, ?)")
                 ->execute([$post_id, $profissional_id]);
         }
 
@@ -174,12 +175,12 @@ if (isset($_POST['acao_curtir']) && verificar_csrf_token($_POST['csrf_token'] ??
 if (isset($_GET['atualizar'])) {
     header('Content-Type: application/json');
     $stmt = $pdo->prepare("
-        SELECT 
+        SELECT
             p.id,
-            p.texto,
-            p.imagem,
-            p.video,
-            p.criado_em,
+            p.legenda,
+            p.tipo,
+            p.midia_url,
+            p.created_at,
             u.id AS autor_id,
             u.nome AS autor_nome,
             u.avatar,
@@ -190,26 +191,26 @@ if (isset($_GET['atualizar'])) {
         FROM posts p
         JOIN usuarios u ON u.id = p.usuario_id
         LEFT JOIN (
-            SELECT post_id, COUNT(*) AS likes 
-            FROM post_likes 
+            SELECT post_id, COUNT(*) AS likes
+            FROM post_likes
             GROUP BY post_id
         ) l ON l.post_id = p.id
-        LEFT JOIN post_likes cl 
-            ON cl.post_id = p.id 
+        LEFT JOIN post_likes cl
+            ON cl.post_id = p.id
             AND cl.usuario_id = ?
-        LEFT JOIN seguidores s 
-            ON s.seguidor_id = ? 
+        LEFT JOIN seguidores s
+            ON s.seguidor_id = ?
             AND s.seguido_id = u.id
-        WHERE 
+        WHERE
             (
                 p.usuario_id IN (
                     SELECT seguido_id FROM seguidores WHERE seguidor_id = ?
-                    UNION 
+                    UNION
                     SELECT seguidor_id FROM seguidores WHERE seguido_id = ?
                 )
                 OR p.usuario_id = ?
             )
-        ORDER BY p.criado_em DESC
+        ORDER BY p.created_at DESC
         LIMIT 20
     ");
     $stmt->execute([
@@ -226,8 +227,8 @@ if (isset($_GET['atualizar'])) {
 
 // Carregamento inicial
 $stmt = $pdo->prepare("
-    SELECT 
-        p.id, p.legenda, midia_url, p.created_at,
+    SELECT
+        p.id, p.tipo, p.legenda, p.midia_url, p.created_at,
         u.id AS autor_id, u.nome AS autor_nome, u.avatar, u.bio,
         COALESCE(l.likes, 0) AS likes,
         CASE WHEN cl.usuario_id IS NOT NULL THEN 1 ELSE 0 END AS curtido,
@@ -380,7 +381,7 @@ include('../includes/header.php');
                                      class="rounded-circle me-3" width="48" height="48" alt="">
                                 <div>
                                     <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($p['autor_nome']); ?></h6>
-                                    <small class="text-muted"><?php echo formatar_data($p['criado_em']); ?></small>
+                                    <small class="text-muted"><?php echo formatar_data($p['created_at']); ?></small>
                                 </div>
                             </div>
                             <?php if ($p['autor_id'] != $profissional_id): ?>
@@ -395,11 +396,11 @@ include('../includes/header.php');
                             <p class="bio-text"><em>"<?php echo htmlspecialchars($p['bio']); ?>"</em></p>
                             <hr class="my-2">
                             <?php endif; ?>
-                            <p class="card-text"><?php echo nl2br(htmlspecialchars($p['legenda'])); ?></p>
-                            <?php if ($p['imagem']): ?>
-                            <img src="../assets/img/feed/<?php echo htmlspecialchars($p['imagem']); ?>" class="post-img img-fluid" alt="Post">
-                            <?php elseif ($p['video']): ?>
-                            <video src="../assets/img/feed/<?php echo htmlspecialchars($p['video']); ?>" class="post-video" controls></video>
+                            <p class="card-text"><?php echo nl2br(htmlspecialchars($p['legenda'] ?? '')); ?></p>
+                            <?php if (($p['tipo'] ?? '') == 'foto' && !empty($p['midia_url'])): ?>
+                            <img src="../assets/img/posts/<?php echo htmlspecialchars($p['midia_url']); ?>" class="post-img img-fluid" alt="Post">
+                            <?php elseif (($p['tipo'] ?? '') == 'video' && !empty($p['midia_url'])): ?>
+                            <video src="../assets/img/posts/<?php echo htmlspecialchars($p['midia_url']); ?>" class="post-video" controls></video>
                             <?php endif; ?>
                         </div>
                         <div class="card-footer bg-white border-0 pt-0">
@@ -535,8 +536,8 @@ include('../includes/header.php');
                     card.dataset.id = p.id;
 
                     const bioHtml = p.bio ? `<p class="bio-text"><em>"${p.bio}"</em></p><hr class="my-2">` : '';
-                    const midiaHtml = p.imagem ? `<img src="../assets/img/posts/${p.imagem}" class="post-img img-fluid" alt="Post">` :
-                                     p.video ? `<video src="../assets/img/posts/${p.video}" class="post-video" controls></video>` : '';
+                    const midiaHtml = (p.tipo === 'foto' && p.midia_url) ? `<img src="../assets/img/posts/${p.midia_url}" class="post-img img-fluid" alt="Post">` :
+                                     (p.tipo === 'video' && p.midia_url) ? `<video src="../assets/img/posts/${p.midia_url}" class="post-video" controls></video>` : '';
                     const curtidoClass = p.curtido ? 'liked' : '';
                     const corCurtido = p.curtido ? 'var(--bs-danger)' : '#6c757d';
                     const followBtn = p.autor_id != <?php echo $profissional_id; ?> ? `
@@ -550,14 +551,14 @@ include('../includes/header.php');
                                 <img src="../assets/img/avatars/${p.avatar || 'default.png'}" class="rounded-circle me-3" width="48" height="48" alt="">
                                 <div>
                                     <h6 class="mb-0 fw-bold">${p.autor_nome}</h6>
-                                    <small class="text-muted">${formatarData(p.criado_em)}</small>
+                                    <small class="text-muted">${formatarData(p.created_at)}</small>
                                 </div>
                             </div>
                             ${followBtn}
                         </div>
                         <div class="card-body">
                             ${bioHtml}
-                            <p class="card-text">${p.texto.replace(/\n/g, '<br>')}</p>
+                            <p class="card-text">${p.legenda.replace(/\n/g, '<br>')}</p>
                             ${midiaHtml}
                         </div>
                         <div class="card-footer bg-white border-0 pt-0">

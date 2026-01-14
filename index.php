@@ -160,8 +160,8 @@ $avaliacoes = $pdo->query("
             <div class="col">
                 <div class="card profissional-card text-center h-100">
                     <div class="card-body">
-                        <?php if ($p['foto'] ?? false): ?>
-                        <img src="assets/img/profissionais/<?php echo $p['foto']; ?>" class="rounded-circle mb-3" alt="<?php echo htmlspecialchars($p['nome']); ?>">
+                        <?php if ($p['avatar'] ?? false): ?>
+                        <img src="assets/img/avatars/<?php echo $p['avatar']; ?>" class="rounded-circle mb-3" alt="<?php echo htmlspecialchars($p['nome']); ?>">
                         <?php else: ?>
                         <div class="bg-secondary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center text-white" style="width:100px;height:100px;">
                             <i class="fas fa-user fa-2x"></i>

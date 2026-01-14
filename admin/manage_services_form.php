@@ -8,13 +8,18 @@ requer_login('admin');
 
 
 $id = $_GET['id'] ?? null;
-$servico = $id ? $pdo->query("SELECT * FROM servicos WHERE id = $id")->fetch() : [];
+$servico = [];
+if ($id) {
+    $stmt = $pdo->prepare("SELECT * FROM servicos WHERE id = ?");
+    $stmt->execute([$id]);
+    $servico = $stmt->fetch() ?: [];
+}
 
 if ($_POST) {
-    $nome = $_POST['nome'];
-    $duracao = $_POST['duracao_min'];
-    $preco = $_POST['preco'];
-    $categoria = $_POST['categoria'];
+    $nome = $_POST['nome'] ?? '';
+    $duracao = $_POST['duracao_min'] ?? 0;
+    $preco = $_POST['preco'] ?? 0;
+    $categoria = $_POST['categoria'] ?? '';
 
     if ($id) {
         $pdo->prepare("UPDATE servicos SET nome=?, duracao_min=?, preco=?, categoria=? WHERE id=?")

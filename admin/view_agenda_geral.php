@@ -1,32 +1,19 @@
 <?php
-// profissional/view_agenda_dia.php - VERSÃO MELHORADA
+// admin/view_agenda_geral.php - Agenda de todos os profissionais
 require_once '../includes/auth.php';
 require_once '../includes/db_connect.php';
 require_once '../includes/utils.php';
-$titulo = "Minha Agenda";
-requer_login('profissional');
+$titulo = "Agenda Geral";
+requer_login('admin');
 
-$profissional_id = $_SESSION['usuario_id'];
 $data = $_GET['data'] ?? date('Y-m-d');
+$profissional_id = $_GET['profissional_id'] ?? '';
 
-// Buscar configurações de dias de funcionamento
-$config = $pdo->query("SELECT funciona_domingo, funciona_segunda, funciona_terca, funciona_quarta, funciona_quinta, funciona_sexta, funciona_sabado FROM configuracoes LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+// Buscar todos os profissionais
+$profissionais = $pdo->query("SELECT id, nome FROM usuarios WHERE tipo = 'profissional' AND ativo = 1 ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
 
-$dia_semana_num = date('w', strtotime($data)); // 0=Domingo, 1=Segunda, ..., 6=Sábado
-$dias_funcionamento = [
-    0 => (int)($config['funciona_domingo'] ?? 0),
-    1 => (int)($config['funciona_segunda'] ?? 1),
-    2 => (int)($config['funciona_terca'] ?? 1),
-    3 => (int)($config['funciona_quarta'] ?? 1),
-    4 => (int)($config['funciona_quinta'] ?? 1),
-    5 => (int)($config['funciona_sexta'] ?? 1),
-    6 => (int)($config['funciona_sabado'] ?? 1)
-];
-
-$dia_funciona = $dias_funcionamento[$dia_semana_num];
-
-// Buscar agendamentos do dia
-$stmt = $pdo->prepare("
+// Buscar agendamentos
+$query = "
     SELECT
         a.id AS agendamento_id,
         a.data,
@@ -39,16 +26,28 @@ $stmt = $pdo->prepare("
         u.nome AS cliente_nome,
         u.telefone AS cliente_telefone,
         u.email AS cliente_email,
-        u.avatar AS cliente_avatar
+        u.avatar AS cliente_avatar,
+        p.nome AS profissional_nome,
+        p.avatar AS profissional_avatar
     FROM agendamentos a
     JOIN agendamento_itens ai ON ai.agendamento_id = a.id
     JOIN servicos s ON s.id = ai.servico_id
     LEFT JOIN usuarios u ON u.id = a.cliente_id
-    WHERE a.profissional_id = ? AND DATE(a.data) = ?
-    GROUP BY a.id
-    ORDER BY a.hora_inicio
-");
-$stmt->execute([$profissional_id, $data]);
+    LEFT JOIN usuarios p ON p.id = a.profissional_id
+    WHERE DATE(a.data) = ?
+";
+
+$params = [$data];
+
+if (!empty($profissional_id)) {
+    $query .= " AND a.profissional_id = ?";
+    $params[] = $profissional_id;
+}
+
+$query .= " GROUP BY a.id ORDER BY a.hora_inicio";
+
+$stmt = $pdo->prepare($query);
+$stmt->execute($params);
 $agendamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Estatísticas do dia
@@ -76,8 +75,8 @@ include '../includes/header.php';
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <h3 class="mb-0">
-                        <i class="fas fa-calendar-alt text-primary me-2"></i>
-                        Minha Agenda
+                        <i class="fas fa-calendar-week text-primary me-2"></i>
+                        Agenda Geral
                     </h3>
                     <p class="text-muted mb-0 mt-1">
                         <?php
@@ -88,37 +87,35 @@ include '../includes/header.php';
                     </p>
                 </div>
                 <div class="col-md-6">
-                    <div class="d-flex gap-2 justify-content-md-end mt-3 mt-md-0">
-                        <button class="btn btn-outline-secondary" onclick="alterarData(-1)">
-                            <i class="fas fa-chevron-left"></i> Anterior
-                        </button>
-                        <input type="date"
-                               id="selecionarData"
-                               class="form-control"
-                               value="<?php echo $data; ?>"
-                               style="max-width: 200px;">
-                        <button class="btn btn-outline-secondary" onclick="alterarData(1)">
-                            Próximo <i class="fas fa-chevron-right"></i>
-                        </button>
-                        <button class="btn btn-primary" onclick="location.href='?data=' + new Date().toISOString().split('T')[0]">
-                            <i class="fas fa-calendar-day"></i> Hoje
-                        </button>
-                    </div>
+                    <form method="GET" class="row g-2 justify-content-md-end mt-3 mt-md-0">
+                        <div class="col-auto">
+                            <select name="profissional_id" class="form-select">
+                                <option value="">Todos os Profissionais</option>
+                                <?php foreach ($profissionais as $prof): ?>
+                                <option value="<?php echo $prof['id']; ?>" <?php echo $profissional_id == $prof['id'] ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($prof['nome']); ?>
+                                </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <input type="date" name="data" class="form-control" value="<?php echo $data; ?>">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter"></i> Filtrar
+                            </button>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-outline-secondary" onclick="location.href='?data=' + new Date().toISOString().split('T')[0]">
+                                <i class="fas fa-calendar-day"></i> Hoje
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- ALERTA DE DIA NÃO FUNCIONAMENTO -->
-    <?php if (!$dia_funciona): ?>
-    <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
-        <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
-        <div>
-            <h5 class="alert-heading mb-1">Dia Não Funcionamento</h5>
-            <p class="mb-0">A empresa não funciona neste dia da semana. Não serão aceitos novos agendamentos para esta data.</p>
-        </div>
-    </div>
-    <?php endif; ?>
 
     <!-- ESTATÍSTICAS DO DIA -->
     <div class="row g-3 mb-4">
@@ -142,7 +139,7 @@ include '../includes/header.php';
             <div class="card-glass text-center" style="border-left: 4px solid #22c55e;">
                 <div class="card-body py-3">
                     <h2 class="mb-1 text-success"><?php echo $agendamentos_concluidos; ?></h2>
-                    <small class="text-muted">Concluídos</small>
+                    <small class="text-muted">Finalizados</small>
                 </div>
             </div>
         </div>
@@ -161,10 +158,9 @@ include '../includes/header.php';
         <div class="card-glass text-center py-5">
             <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
             <h5 class="text-muted">Nenhum agendamento para este dia</h5>
-            <p class="text-muted mb-0">Aproveite para relaxar ou conferir outros dias!</p>
+            <p class="text-muted mb-0">Selecione outra data ou profissional</p>
         </div>
     <?php else: ?>
-
         <div class="row g-3">
             <?php foreach ($agendamentos as $agendamento):
                 $status_info = $status_map[$agendamento['status']] ?? $status_map['agendado'];
@@ -173,13 +169,25 @@ include '../includes/header.php';
                 <div class="card-glass hover-lift">
                     <div class="card-body">
                         <div class="row">
-                            <!-- Avatar e Info do Cliente -->
-                            <div class="col-md-4 border-end">
+                            <!-- Profissional -->
+                            <div class="col-md-2 border-end">
+                                <div class="text-center">
+                                    <img src="../assets/img/avatars/<?php echo $agendamento['profissional_avatar'] ?? 'default.png'; ?>"
+                                         alt="Profissional"
+                                         class="avatar-salao mb-2"
+                                         style="width: 60px; height: 60px;">
+                                    <h6 class="mb-0 small fw-bold"><?php echo htmlspecialchars($agendamento['profissional_nome']); ?></h6>
+                                    <small class="text-muted">Profissional</small>
+                                </div>
+                            </div>
+
+                            <!-- Cliente -->
+                            <div class="col-md-3 border-end">
                                 <div class="d-flex align-items-center gap-3 mb-3">
                                     <img src="../assets/img/avatars/<?php echo $agendamento['cliente_avatar'] ?? 'default.png'; ?>"
                                          alt="Cliente"
                                          class="avatar-salao"
-                                         style="width: 60px; height: 60px;">
+                                         style="width: 50px; height: 50px;">
                                     <div>
                                         <h6 class="mb-1 fw-bold"><?php echo htmlspecialchars($agendamento['cliente_nome']); ?></h6>
                                         <small class="text-muted">
@@ -189,12 +197,10 @@ include '../includes/header.php';
                                     </div>
                                 </div>
 
-                                <div class="mb-2">
-                                    <span class="badge <?php echo $status_info['badge']; ?> w-100 py-2">
-                                        <i class="fas fa-<?php echo $status_info['icone']; ?> me-1"></i>
-                                        <?php echo $status_info['texto']; ?>
-                                    </span>
-                                </div>
+                                <span class="badge <?php echo $status_info['badge']; ?> w-100 py-2">
+                                    <i class="fas fa-<?php echo $status_info['icone']; ?> me-1"></i>
+                                    <?php echo $status_info['texto']; ?>
+                                </span>
                             </div>
 
                             <!-- Detalhes do Agendamento -->
@@ -234,23 +240,11 @@ include '../includes/header.php';
                             </div>
 
                             <!-- Ações -->
-                            <div class="col-md-3 d-flex flex-column gap-2 justify-content-center">
+                            <div class="col-md-2 d-flex flex-column gap-2 justify-content-center">
                                 <?php if ($agendamento['status'] === 'agendado'): ?>
-                                    <a href="handle_agenda_action.php?action=chegada&item_id=<?php echo $agendamento['agendamento_id']; ?>"
-                                       class="btn btn-outline-info btn-sm">
-                                        <i class="fas fa-user-check me-1"></i>Confirmar Chegada
-                                    </a>
-                                <?php elseif ($agendamento['status'] === 'confirmado'): ?>
-                                    <a href="handle_agenda_action.php?action=iniciar&item_id=<?php echo $agendamento['agendamento_id']; ?>"
-                                       class="btn btn-primary btn-sm">
-                                        <i class="fas fa-play me-1"></i>Iniciar Atendimento
-                                    </a>
-                                <?php elseif ($agendamento['status'] === 'em_atendimento'): ?>
-                                    <button type="button"
-                                            class="btn btn-success btn-sm"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#finalizarModal<?php echo $agendamento['agendamento_id']; ?>">
-                                        <i class="fas fa-check me-1"></i>Finalizar
+                                    <button class="btn btn-outline-danger btn-sm"
+                                            onclick="if(confirm('Cancelar este agendamento?')) location.href='handle_cancelar_agendamento.php?id=<?php echo $agendamento['agendamento_id']; ?>'">
+                                        <i class="fas fa-times me-1"></i>Cancelar
                                     </button>
                                 <?php elseif ($agendamento['status'] === 'finalizado'): ?>
                                     <button class="btn btn-outline-success btn-sm" disabled>
@@ -270,72 +264,9 @@ include '../includes/header.php';
                     </div>
                 </div>
             </div>
-
-            <!-- Modal Finalizar -->
-            <div class="modal fade" id="finalizarModal<?php echo $agendamento['agendamento_id']; ?>" tabindex="-1">
-                <div class="modal-dialog">
-                    <form action="handle_add_atendimento.php" method="POST">
-                        <div class="modal-content">
-                            <div class="modal-header bg-success text-white">
-                                <h5 class="modal-title">
-                                    <i class="fas fa-check-circle me-2"></i>
-                                    Finalizar Atendimento
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" name="item_id" value="<?php echo $agendamento['agendamento_id']; ?>">
-                                <input type="hidden" name="csrf_token" value="<?php echo gerar_csrf_token(); ?>">
-
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    Você está finalizando o atendimento de <strong><?php echo htmlspecialchars($agendamento['cliente_nome']); ?></strong>
-                                </div>
-
-                                <div class="mb-3">
-                                    <strong>Serviços:</strong>
-                                    <p class="mb-0"><?php echo htmlspecialchars($agendamento['servicos']); ?></p>
-                                </div>
-
-                                <div class="mb-3">
-                                    <strong>Valor Total:</strong>
-                                    <p class="mb-0 text-success fs-5"><?php echo formatar_moeda($agendamento['valor_total']); ?></p>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    <i class="fas fa-times me-1"></i>Cancelar
-                                </button>
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fas fa-check me-1"></i>Confirmar Finalização
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
 </div>
-
-<script>
-// Navegar entre datas
-function alterarData(dias) {
-    const dataAtual = document.getElementById('selecionarData').value;
-    const data = new Date(dataAtual + 'T00:00:00');
-    data.setDate(data.getDate() + dias);
-    const novaData = data.toISOString().split('T')[0];
-    location.href = '?data=' + novaData;
-}
-
-// Mudar data ao selecionar no input
-document.getElementById('selecionarData').addEventListener('change', function() {
-    location.href = '?data=' + this.value;
-});
-
-// Auto-refresh a cada 2 minutos
-setTimeout(() => location.reload(), 120000);
-</script>
 
 <?php include '../includes/footer.php'; ?>

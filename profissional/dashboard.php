@@ -13,7 +13,6 @@ $hoje = date('Y-m-d');
 if ($_POST && verificar_csrf_token($_POST['csrf_token'] ?? '')) {
     $agendamento_id = (int)($_POST['agendamento_id'] ?? 0);
     $cliente_nome = trim($_POST['cliente_nome'] ?? '');
-    $vale = (float)str_replace(['.', ','], ['', '.'], $_POST['vale'] ?? '0');
     $gorjeta = (float)str_replace(['.', ','], ['', '.'], $_POST['gorjeta'] ?? '0');
     $servicos_selecionados = is_array($_POST['servicos'] ?? []) ? $_POST['servicos'] : [];
     $produtos = $_POST['produtos'] ?? [];
@@ -95,7 +94,12 @@ if ($_POST && verificar_csrf_token($_POST['csrf_token'] ?? '')) {
         $stmt = $pdo->prepare("SELECT COALESCE(comissao_padrao, 0) FROM usuarios WHERE id = ?");
         $stmt->execute([$profissional_id]);
         $comissao_percentual = (float)$stmt->fetchColumn();
-        
+
+        // Buscar comissões específicas (serviço e produto) do profissional
+        $stmt = $pdo->prepare("SELECT servico, produto FROM comissoes WHERE profissional_id = ? LIMIT 1");
+        $stmt->execute([$profissional_id]);
+        $comissoes = $stmt->fetch(PDO::FETCH_ASSOC);
+
         $comissao = ($valor_total_servicos + $valor_total_produtos) * ($comissao_percentual / 100);
 
         // 1. CRIAR ATENDIMENTO
@@ -103,38 +107,30 @@ if ($_POST && verificar_csrf_token($_POST['csrf_token'] ?? '')) {
             INSERT INTO atendimentos (
                 profissional_id,
                 cliente_nome,
-                data_atendimento,
-                agendamento_id,
                 cliente_id,
                 servico_id,
-                hora_inicio,
                 valor_servico,
                 valor_produto,
                 gorjeta,
-                vale,
-                comissao,
+                comissao_servico,
+                metodo_pagamento,
                 status,
-                criado_em
+                data_atendimento
             ) VALUES (
-                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'concluido', NOW()
+                ?, ?, ?, ?, ?, ?, ?, ?, 'dinheiro', 'concluido', NOW()
             )
         ");
-        
+
         $primeiro_servico_id = $servicos_dados[0]['id'] ?? null;
-        $hora_atual = date('H:i:s');
-        
+
         $stmt->execute([
             $profissional_id,
             $cliente_nome,
-            $hoje,
-            $agendamento_id > 0 ? $agendamento_id : null,
             $cliente_id,
             $primeiro_servico_id,
-            $hora_atual,
             $valor_total_servicos,
             $valor_total_produtos,
             $gorjeta,
-            $vale,
             $comissao
         ]);
         
@@ -143,45 +139,57 @@ if ($_POST && verificar_csrf_token($_POST['csrf_token'] ?? '')) {
         // 2. ATUALIZAR AGENDAMENTO
         if ($agendamento_id > 0) {
             $stmt = $pdo->prepare("
-                UPDATE agendamentos 
-                SET status = 'concluido', atendimento_id = ? 
+                UPDATE agendamentos
+                SET status = 'finalizado'
                 WHERE id = ?
             ");
-            $stmt->execute([$atendimento_id, $agendamento_id]);
+            $stmt->execute([$agendamento_id]);
         }
 
         // 3. REGISTRAR SERVIÇOS REALIZADOS
         $stmt = $pdo->prepare("
-            INSERT INTO servicos_realizados 
-            (atendimento_id, servico_id, nome, preco, duracao_min, categoria, criado_em) 
-            VALUES (?, ?, ?, ?, ?, ?, NOW())
+            INSERT INTO servicos_realizados
+            (atendimento_id, profissional_id, servico_id, cliente_id, nome, preco, comissao, data_realizacao)
+            VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
         ");
-        
+
+        // Calcular comissão por serviço
+        $comissao_por_servico = count($servicos_dados) > 0 ? ($valor_total_servicos * ($comissao_percentual / 100)) / count($servicos_dados) : 0;
+
         foreach ($servicos_dados as $s) {
             $stmt->execute([
                 $atendimento_id,
+                $profissional_id,
                 $s['id'],
+                $cliente_id,
                 $s['nome'],
                 $s['preco'],
-                $s['duracao_min'],
-                $s['categoria']
+                $comissao_por_servico
             ]);
         }
 
         // 4. REGISTRAR PRODUTOS VENDIDOS
         if (!empty($produtos_dados)) {
             $stmt = $pdo->prepare("
-                INSERT INTO vendas_produtos 
-                (atendimento_id, produto_id, quantidade, valor_unitario, criado_em) 
-                VALUES (?, ?, ?, ?, NOW())
+                INSERT INTO vendas_produtos
+                (atendimento_id, profissional_id, produto_id, cliente_id, quantidade, valor_unitario, valor_total, comissao_produto, data_venda)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
             ");
-            
+
+            // Calcular comissão de produtos
+            $comissao_perc_produtos = $comissoes ? (float)$comissoes['produto'] : 0.0;
+
             foreach ($produtos_dados as $prod) {
+                $comissao_prod = $prod['valor_total'] * ($comissao_perc_produtos / 100);
                 $stmt->execute([
                     $atendimento_id,
+                    $profissional_id,
                     $prod['id'],
+                    $cliente_id,
                     $prod['quantidade'],
-                    $prod['valor_total']
+                    $prod['valor_unitario'],
+                    $prod['valor_total'],
+                    $comissao_prod
                 ]);
             }
         }
@@ -189,17 +197,9 @@ if ($_POST && verificar_csrf_token($_POST['csrf_token'] ?? '')) {
         // 5. REGISTRAR GORJETA
         if ($gorjeta > 0) {
             $pdo->prepare("
-                INSERT INTO gorjetas (atendimento_id, valor, criado_em) 
-                VALUES (?, ?, NOW())
-            ")->execute([$atendimento_id, $gorjeta]);
-        }
-
-        // 6. REGISTRAR VALE
-        if ($vale > 0) {
-            $pdo->prepare("
-                INSERT INTO vales (profissional_id, vale, criado_em) 
-                VALUES (?, ?, NOW())
-            ")->execute([$profissional_id, $vale]);
+                INSERT INTO gorjetas (profissional_id, cliente_id, atendimento_id, valor, forma_pagamento, status, data_gorjeta)
+                VALUES (?, ?, ?, ?, 'dinheiro', 'pendente', NOW())
+            ")->execute([$profissional_id, $cliente_id, $atendimento_id, $gorjeta]);
         }
 
         $pdo->commit();
@@ -261,12 +261,50 @@ $total_vales = (float)$stmt->fetchColumn();
 $stmt = $pdo->prepare("
     SELECT COUNT(DISTINCT id) AS total
     FROM atendimentos
-    WHERE profissional_id = ? 
-      AND DATE(data_atendimento) = ? 
+    WHERE profissional_id = ?
+      AND DATE(data_atendimento) = ?
       AND status = 'concluido'
 ");
 $stmt->execute([$profissional_id, $hoje]);
 $clientes_atendidos = (int)$stmt->fetchColumn();
+
+// Atendimentos de Agendamentos vs Avulsos
+$stmt = $pdo->prepare("
+    SELECT
+        SUM(CASE
+            WHEN EXISTS (
+                SELECT 1 FROM agendamentos ag
+                WHERE ag.cliente_id = at.cliente_id
+                  AND DATE(ag.data) = DATE(at.data_atendimento)
+                  AND ag.profissional_id = at.profissional_id
+                  AND ag.status = 'finalizado'
+            ) THEN 1
+            ELSE 0
+        END) AS atendimentos_agendados,
+        SUM(CASE
+            WHEN NOT EXISTS (
+                SELECT 1 FROM agendamentos ag
+                WHERE ag.cliente_id = at.cliente_id
+                  AND DATE(ag.data) = DATE(at.data_atendimento)
+                  AND ag.profissional_id = at.profissional_id
+                  AND ag.status = 'finalizado'
+            ) THEN 1
+            ELSE 0
+        END) AS atendimentos_avulsos
+    FROM atendimentos at
+    WHERE at.profissional_id = ?
+      AND DATE(at.data_atendimento) = ?
+      AND at.status = 'concluido'
+");
+$stmt->execute([$profissional_id, $hoje]);
+$origem_atendimentos = $stmt->fetch(PDO::FETCH_ASSOC);
+$atendimentos_agendados = (int)($origem_atendimentos['atendimentos_agendados'] ?? 0);
+$atendimentos_avulsos = (int)($origem_atendimentos['atendimentos_avulsos'] ?? 0);
+
+// Buscar comissão padrão do profissional
+$stmt = $pdo->prepare("SELECT COALESCE(comissao_padrao, 0) FROM usuarios WHERE id = ?");
+$stmt->execute([$profissional_id]);
+$comissao_percentual = (float)$stmt->fetchColumn();
 
 // Buscar as comissões específicas (serviço e produto) do profissional
 $stmt = $pdo->prepare("SELECT servico, produto FROM comissoes WHERE profissional_id = ? LIMIT 1");
@@ -296,18 +334,32 @@ $dados = [
 
 // === LISTA DE CLIENTES ATENDIDOS HOJE ===
 $stmt = $pdo->prepare("
-    SELECT 
-        id,
-        cliente_nome,
-        data_atendimento,
-        valor_servico,
-        valor_produto,
-        gorjeta
-    FROM atendimentos
-    WHERE profissional_id = ?
-      AND DATE(data_atendimento) = ?
-      AND status = 'concluido'
-    ORDER BY data_atendimento DESC
+    SELECT
+        at.id,
+        at.cliente_nome,
+        at.cliente_id,
+        at.data_atendimento,
+        at.valor_servico,
+        at.valor_produto,
+        at.gorjeta,
+        GROUP_CONCAT(DISTINCT sr.nome SEPARATOR ', ') AS servicos_realizados,
+        CASE
+            WHEN EXISTS (
+                SELECT 1 FROM agendamentos ag
+                WHERE ag.cliente_id = at.cliente_id
+                  AND DATE(ag.data) = DATE(at.data_atendimento)
+                  AND ag.profissional_id = at.profissional_id
+                  AND ag.status = 'finalizado'
+            ) THEN 1
+            ELSE 0
+        END AS veio_de_agendamento
+    FROM atendimentos at
+    LEFT JOIN servicos_realizados sr ON sr.atendimento_id = at.id
+    WHERE at.profissional_id = ?
+      AND DATE(at.data_atendimento) = ?
+      AND at.status = 'concluido'
+    GROUP BY at.id
+    ORDER BY at.data_atendimento DESC
 ");
 $stmt->execute([$profissional_id, $hoje]);
 $clientes_atendidos_lista = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -339,6 +391,17 @@ $servicos = $pdo->query("SELECT id, nome, preco FROM servicos WHERE ativo = 1 OR
 // === ESTATÍSTICAS ===
 $total_posts = (int)$pdo->query("SELECT COUNT(*) FROM posts WHERE usuario_id = $profissional_id")->fetchColumn();
 $seguidores = (int)$pdo->query("SELECT COUNT(*) FROM seguidores WHERE seguido_id = $profissional_id")->fetchColumn();
+
+// === VALES DO DIA ===
+$stmt = $pdo->prepare("
+    SELECT id, valor, motivo, data_vale, DATE_FORMAT(data_vale, '%d/%m/%Y') as data_formatada
+    FROM vales
+    WHERE profissional_id = ?
+      AND DATE(data_vale) = ?
+    ORDER BY id DESC
+");
+$stmt->execute([$profissional_id, $hoje]);
+$vales_lista = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 include '../includes/header.php';
 ?>
@@ -393,6 +456,69 @@ include '../includes/header.php';
                 </div>
             </div>
 
+            <!-- ORIGEM DOS ATENDIMENTOS -->
+            <?php if ($clientes_atendidos > 0): ?>
+            <div class="card-glass mb-4">
+                <div class="card-glass-header" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Origem dos Atendimentos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center g-3">
+                        <div class="col-6">
+                            <div class="p-3 rounded" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                                <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                                    <i class="fas fa-calendar-check fa-2x"></i>
+                                    <h2 class="mb-0"><?php echo $atendimentos_agendados; ?></h2>
+                                </div>
+                                <small class="d-block">Agendamentos</small>
+                                <small class="opacity-75">
+                                    <?php
+                                    $perc_agendados = $clientes_atendidos > 0 ? ($atendimentos_agendados / $clientes_atendidos) * 100 : 0;
+                                    echo number_format($perc_agendados, 1);
+                                    ?>% do total
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;">
+                                <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                                    <i class="fas fa-user-plus fa-2x"></i>
+                                    <h2 class="mb-0"><?php echo $atendimentos_avulsos; ?></h2>
+                                </div>
+                                <small class="d-block">Avulsos</small>
+                                <small class="opacity-75">
+                                    <?php
+                                    $perc_avulsos = $clientes_atendidos > 0 ? ($atendimentos_avulsos / $clientes_atendidos) * 100 : 0;
+                                    echo number_format($perc_avulsos, 1);
+                                    ?>% do total
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="progress" style="height: 25px; border-radius: 12px;">
+                            <?php if ($atendimentos_agendados > 0): ?>
+                            <div class="progress-bar bg-success" style="width: <?php echo $perc_agendados; ?>%;">
+                                <?php if ($perc_agendados > 15): ?>
+                                <span class="fw-bold"><?php echo $atendimentos_agendados; ?> agendados</span>
+                                <?php endif; ?>
+                            </div>
+                            <?php endif; ?>
+                            <?php if ($atendimentos_avulsos > 0): ?>
+                            <div class="progress-bar bg-primary" style="width: <?php echo $perc_avulsos; ?>%;">
+                                <?php if ($perc_avulsos > 15): ?>
+                                <span class="fw-bold"><?php echo $atendimentos_avulsos; ?> avulsos</span>
+                                <?php endif; ?>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <!-- CLIENTES ATENDIDOS -->
             <?php if (!empty($clientes_atendidos_lista)): ?>
             <div class="card-glass mb-4">
@@ -400,22 +526,52 @@ include '../includes/header.php';
                     <h5 class="mb-0"><i class="fas fa-users me-2"></i>Clientes Atendidos Hoje (<?php echo count($clientes_atendidos_lista); ?>)</h5>
                 </div>
                 <div class="p-0">
-                    <?php foreach ($clientes_atendidos_lista as $cliente): 
+                    <?php foreach ($clientes_atendidos_lista as $cliente):
                         $total_cliente = $cliente['valor_servico'] + $cliente['valor_produto'] + $cliente['gorjeta'];
+                        $cor_borda = $cliente['veio_de_agendamento'] ? '#10b981' : '#3b82f6';
                     ?>
-                    <div class="p-3 border-bottom hover-lift" style="border-left: 4px solid #3b82f6;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1 fw-bold"><?php echo htmlspecialchars($cliente['cliente_nome']); ?></h6>
-                                <small class="text-muted">
-                                    <i class="fas fa-clock me-1"></i><?php echo substr($cliente['hora_inicio'], 0, 5); ?>
+                    <div class="p-3 border-bottom hover-lift" style="border-left: 4px solid <?php echo $cor_borda; ?>;">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($cliente['cliente_nome']); ?></h6>
+                                    <?php if ($cliente['veio_de_agendamento']): ?>
+                                    <span class="badge bg-success" style="font-size: 0.7rem;">
+                                        <i class="fas fa-calendar-check me-1"></i>Agendamento
+                                    </span>
+                                    <?php else: ?>
+                                    <span class="badge bg-primary" style="font-size: 0.7rem;">
+                                        <i class="fas fa-user-plus me-1"></i>Avulso
+                                    </span>
+                                    <?php endif; ?>
+                                </div>
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-clock me-1"></i><?php echo date('H:i', strtotime($cliente['data_atendimento'])); ?>
+                                    <?php if (!empty($cliente['servicos_realizados'])): ?>
+                                        <span class="mx-2">•</span>
+                                        <i class="fas fa-scissors me-1"></i><?php echo htmlspecialchars($cliente['servicos_realizados']); ?>
+                                    <?php endif; ?>
                                 </small>
                             </div>
                             <div class="text-end">
-                                <div class="fw-bold text-success">R$ <?php echo number_format($total_cliente, 2, ',', '.'); ?></div>
-                                <?php if ($cliente['gorjeta'] > 0): ?>
-                                <small class="badge bg-success">+ R$ <?php echo number_format($cliente['gorjeta'], 2, ',', '.'); ?> gorjeta</small>
-                                <?php endif; ?>
+                                <div class="fw-bold text-success fs-5">R$ <?php echo number_format($total_cliente, 2, ',', '.'); ?></div>
+                                <div class="d-flex gap-2 justify-content-end mt-1">
+                                    <?php if ($cliente['valor_servico'] > 0): ?>
+                                    <small class="text-muted">
+                                        <i class="fas fa-cut"></i> R$ <?php echo number_format($cliente['valor_servico'], 2, ',', '.'); ?>
+                                    </small>
+                                    <?php endif; ?>
+                                    <?php if ($cliente['valor_produto'] > 0): ?>
+                                    <small class="text-muted">
+                                        <i class="fas fa-shopping-bag"></i> R$ <?php echo number_format($cliente['valor_produto'], 2, ',', '.'); ?>
+                                    </small>
+                                    <?php endif; ?>
+                                    <?php if ($cliente['gorjeta'] > 0): ?>
+                                    <small class="badge bg-success">
+                                        <i class="fas fa-heart"></i> R$ <?php echo number_format($cliente['gorjeta'], 2, ',', '.'); ?>
+                                    </small>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -462,11 +618,7 @@ include '../includes/header.php';
                         </div>
 
                         <div class="row g-3 mt-2">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Vale</label>
-                                <input type="text" name="vale" class="input-salao money" value="0,00">
-                            </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label class="form-label fw-bold">Gorjeta</label>
                                 <input type="text" name="gorjeta" class="input-salao money" value="0,00">
                             </div>
@@ -551,6 +703,69 @@ include '../includes/header.php';
                             <i class="fas fa-sync-alt me-1"></i>Atualizado em <?php echo date('H:i'); ?>
                         </small>
                     </div>
+                </div>
+            </div>
+
+            <!-- GERENCIAR VALES -->
+            <div class="card-glass mt-3">
+                <div class="card-glass-header" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                    <h5 class="mb-0">
+                        <i class="fas fa-hand-holding-usd me-2"></i>Vales
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Formulário para adicionar vale -->
+                    <form action="handle_add_vale.php" method="POST" class="mb-3">
+                        <input type="hidden" name="csrf_token" value="<?php echo gerar_csrf_token(); ?>">
+
+                        <div class="mb-2">
+                            <label class="form-label fw-bold small">Valor</label>
+                            <input type="text" name="valor" class="input-salao money" value="0,00" required>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label fw-bold small">Motivo</label>
+                            <input type="text" name="motivo" class="input-salao" placeholder="Ex: Transporte, Almoço..." required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Data</label>
+                            <input type="date" name="data" class="input-salao" value="<?php echo $hoje; ?>" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="fas fa-plus me-2"></i>Adicionar Vale
+                        </button>
+                    </form>
+
+                    <hr>
+
+                    <!-- Lista de vales do dia -->
+                    <h6 class="mb-3">Vales de Hoje</h6>
+                    <?php if (empty($vales_lista)): ?>
+                        <p class="text-muted text-center small mb-0">Nenhum vale registrado hoje</p>
+                    <?php else: ?>
+                        <div class="list-group list-group-flush">
+                            <?php foreach ($vales_lista as $vale): ?>
+                            <div class="list-group-item px-0 py-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold text-danger">R$ <?php echo number_format($vale['valor'], 2, ',', '.'); ?></div>
+                                        <small class="text-muted"><?php echo htmlspecialchars($vale['motivo']); ?></small>
+                                    </div>
+                                    <a href="handle_delete_vale.php?id=<?php echo $vale['id']; ?>"
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Excluir este vale?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="mt-3 p-2 bg-light rounded text-center">
+                            <strong class="text-danger">Total: R$ <?php echo number_format($total_vales, 2, ',', '.'); ?></strong>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

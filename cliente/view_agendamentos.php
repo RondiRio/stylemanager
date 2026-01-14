@@ -9,21 +9,24 @@ include '../includes/header.php';
 
 $hoje = date('Y-m-d');
 
-// QUERY CORRIGIDA - Buscar por cliente_id, não profissional_id
+// Buscar agendamentos do cliente
 $stmt = $pdo->prepare("
-    SELECT 
+    SELECT
         a.id,
         a.data,
         a.hora_inicio,
         a.status,
-        a.criado_em,
-        a.servicos,
+        a.created_at,
         u.nome AS profissional_nome,
         u.avatar AS profissional_avatar,
-        a.valor_total
+        GROUP_CONCAT(s.nome SEPARATOR ', ') AS servicos,
+        SUM(s.preco) AS valor_total
     FROM agendamentos a
     JOIN usuarios u ON u.id = a.profissional_id
+    LEFT JOIN agendamento_itens ai ON ai.agendamento_id = a.id
+    LEFT JOIN servicos s ON s.id = ai.servico_id
     WHERE a.cliente_id = ?
+    GROUP BY a.id
     ORDER BY a.data DESC, a.hora_inicio DESC
 ");
 $stmt->execute([$_SESSION['usuario_id']]);

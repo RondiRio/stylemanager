@@ -19,7 +19,7 @@ echo "<h2>Relatório Mensal - " . date('F/Y', strtotime($inicio)) . "</h2>";
 
 // Faturamento
 $faturamentoServicos = $pdo->prepare("SELECT COALESCE(SUM(valor), 0) FROM atendimentos WHERE data_atendimento BETWEEN ? AND ? AND status = 'concluido'")->execute([$inicio, $fim]) ? $pdo->fetchColumn() : 0;
-$faturamentoProdutos = $pdo->prepare("SELECT COALESCE(SUM(valor_total), 0) FROM vendas_produto WHERE data_venda BETWEEN ? AND ?")->execute([$inicio, $fim]) ? $pdo->fetchColumn() : 0;
+$faturamentoProdutos = $pdo->prepare("SELECT COALESCE(SUM(valor_total), 0) FROM vendas_produtos WHERE data_venda BETWEEN ? AND ?")->execute([$inicio, $fim]) ? $pdo->fetchColumn() : 0;
 $total = $faturamentoServicos + $faturamentoProdutos;
 
 echo "<table border='1'><tr><th>Tipo</th><th>Valor</th></tr>";
@@ -36,7 +36,7 @@ $comissoes = $pdo->prepare("
            (COALESCE(SUM(a.comissao), 0) + COALESCE(SUM(v.comissao_produto), 0)) AS total
     FROM usuarios u
     LEFT JOIN atendimentos a ON a.profissional_id = u.id AND a.data_atendimento BETWEEN ? AND ? AND a.status = 'concluido'
-    LEFT JOIN vendas_produto v ON v.profissional_id = u.id AND v.data_venda BETWEEN ? AND ?
+    LEFT JOIN vendas_produtos v ON v.profissional_id = u.id AND v.data_venda BETWEEN ? AND ?
     WHERE u.tipo = 'profissional' AND u.ativo = 1
     GROUP BY u.id HAVING total > 0
     ORDER BY total DESC

@@ -37,13 +37,45 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $data)) {
 }
 
 try {
-    // Buscar configurações do horário de funcionamento
-    $stmt = $pdo->query("SELECT horario_abertura, horario_fechamento, intervalo_slot FROM configuracoes LIMIT 1");
+    // Buscar configurações do horário de funcionamento e dias de funcionamento
+    $stmt = $pdo->query("SELECT horario_abertura, horario_fechamento, intervalo_slot, funciona_domingo, funciona_segunda, funciona_terca, funciona_quarta, funciona_quinta, funciona_sexta, funciona_sabado FROM configuracoes LIMIT 1");
     $config = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     $horario_abertura = $config['horario_abertura'] ?? '09:00:00';
     $horario_fechamento = $config['horario_fechamento'] ?? '19:00:00';
     $intervalo_slot = (int)($config['intervalo_slot'] ?? 30);
+
+    // Verificar se a empresa funciona no dia da semana selecionado
+    $dia_semana = date('w', strtotime($data)); // 0=Domingo, 1=Segunda, ..., 6=Sábado
+    $dias_funcionamento = [
+        0 => (int)($config['funciona_domingo'] ?? 0),
+        1 => (int)($config['funciona_segunda'] ?? 1),
+        2 => (int)($config['funciona_terca'] ?? 1),
+        3 => (int)($config['funciona_quarta'] ?? 1),
+        4 => (int)($config['funciona_quinta'] ?? 1),
+        5 => (int)($config['funciona_sexta'] ?? 1),
+        6 => (int)($config['funciona_sabado'] ?? 1)
+    ];
+
+    $dias_semana_nomes = [
+        0 => 'domingo',
+        1 => 'segunda-feira',
+        2 => 'terça-feira',
+        3 => 'quarta-feira',
+        4 => 'quinta-feira',
+        5 => 'sexta-feira',
+        6 => 'sábado'
+    ];
+
+    if (!$dias_funcionamento[$dia_semana]) {
+        echo json_encode([
+            'sucesso' => false,
+            'erro' => 'Não funcionamos às ' . $dias_semana_nomes[$dia_semana] . 's. Por favor, escolha outro dia.',
+            'dia_nao_funciona' => true
+        ]);
+        ob_end_flush();
+        exit;
+    }
 
     // PROTEÇÃO: Evitar intervalo inválido para prevenir loop infinito
     if ($intervalo_slot <= 0) {

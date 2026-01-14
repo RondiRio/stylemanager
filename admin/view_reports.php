@@ -36,7 +36,7 @@ $faturamento_servicos = (float)$stmt->fetchColumn();
 // 2. FATURAMENTO PRODUTOS
 // ==================================================
 $stmt = $pdo->prepare("
-    SELECT COALESCE(SUM(vp.valor_unitario), 0) as total
+    SELECT COALESCE(SUM(vp.valor_unitario * vp.quantidade), 0) as total
     FROM atendimentos a
     JOIN vendas_produtos vp ON vp.atendimento_id = a.id
     WHERE a.data_atendimento BETWEEN ? AND ?
@@ -49,58 +49,70 @@ $faturamento_total = $faturamento_servicos + $faturamento_produtos;
 
 
 // ==================================================
-// 2.1 FATURANDO AS GORJETAS  
+// 2.1 FATURAMENTO GORJETAS (TOTAL GERAL)
 // ==================================================
-
 $stmt = $pdo->prepare("
     SELECT COALESCE(SUM(a.gorjeta), 0) as total
     FROM atendimentos a
     WHERE a.data_atendimento BETWEEN ? AND ?
       AND a.status = 'concluido'
       AND a.profissional_id IS NOT NULL
-    GROUP BY a.profissional_id
 ");
 $stmt->execute([$inicio, $fim]);
-$faturamento_gorjetas = (float)$stmt->fetchColumn();
-
-
-// print_r($faturamento_gorjetas);
+$faturamento_gorjetas_total = (float)$stmt->fetchColumn();
 // ==================================================
 // 3. COMISSÕES POR PROFISSIONAL
 // ==================================================
 $stmt = $pdo->prepare("
-    SELECT 
-    u.id,
-    u.nome,
-    u.avatar,
-    COUNT(DISTINCT a.id) AS total_atendimentos,
-    COALESCE(SUM(DISTINCT sr.preco), 0) AS faturamento_servicos,
-    COALESCE(SUM(DISTINCT vp.valor_unitario), 0) AS faturamento_produtos,
-    MAX(CASE WHEN c.tipo = 'servico' THEN c.servico END) AS comissao_servico,
-    MAX(CASE WHEN c.tipo = 'produto' THEN c.produto END) AS comissao_produto
-FROM usuarios u
-LEFT JOIN atendimentos a 
-    ON a.profissional_id = u.id
-    AND a.data_atendimento BETWEEN ? AND ?
-    AND a.status = 'concluido'
-LEFT JOIN servicos_realizados sr ON sr.atendimento_id = a.id
-LEFT JOIN vendas_produtos vp ON vp.atendimento_id = a.id
-LEFT JOIN comissoes c ON c.profissional_id = u.id
-WHERE u.tipo = 'profissional' AND u.ativo = 1
-GROUP BY u.id, u.nome, u.avatar
-HAVING (COALESCE(SUM(sr.preco),0) + COALESCE(SUM(vp.valor_unitario),0)) > 0
-ORDER BY (COALESCE(SUM(sr.preco),0) + COALESCE(SUM(vp.valor_unitario),0)) DESC
-
+    SELECT
+        u.id,
+        u.nome,
+        u.avatar,
+        COALESCE(atd.total_atendimentos, 0) AS total_atendimentos,
+        COALESCE(srv.faturamento_servicos, 0) AS faturamento_servicos,
+        COALESCE(prd.faturamento_produtos, 0) AS faturamento_produtos,
+        COALESCE(grt.gorjetas, 0) AS gorjetas,
+        COALESCE(c.servico, 0) AS comissao_servico,
+        COALESCE(c.produto, 0) AS comissao_produto
+    FROM usuarios u
+    LEFT JOIN (
+        SELECT profissional_id, COUNT(DISTINCT id) AS total_atendimentos
+        FROM atendimentos
+        WHERE data_atendimento BETWEEN ? AND ? AND status = 'concluido'
+        GROUP BY profissional_id
+    ) atd ON atd.profissional_id = u.id
+    LEFT JOIN (
+        SELECT a.profissional_id, SUM(sr.preco) AS faturamento_servicos
+        FROM atendimentos a
+        JOIN servicos_realizados sr ON sr.atendimento_id = a.id
+        WHERE a.data_atendimento BETWEEN ? AND ? AND a.status = 'concluido'
+        GROUP BY a.profissional_id
+    ) srv ON srv.profissional_id = u.id
+    LEFT JOIN (
+        SELECT a.profissional_id, SUM(vp.valor_unitario * vp.quantidade) AS faturamento_produtos
+        FROM atendimentos a
+        JOIN vendas_produtos vp ON vp.atendimento_id = a.id
+        WHERE a.data_atendimento BETWEEN ? AND ? AND a.status = 'concluido'
+        GROUP BY a.profissional_id
+    ) prd ON prd.profissional_id = u.id
+    LEFT JOIN (
+        SELECT profissional_id, SUM(gorjeta) AS gorjetas
+        FROM atendimentos
+        WHERE data_atendimento BETWEEN ? AND ? AND status = 'concluido'
+        GROUP BY profissional_id
+    ) grt ON grt.profissional_id = u.id
+    LEFT JOIN comissoes c ON c.profissional_id = u.id
+    WHERE u.tipo = 'profissional' AND u.ativo = 1
+    HAVING (COALESCE(faturamento_servicos, 0) + COALESCE(faturamento_produtos, 0)) > 0
+    ORDER BY (COALESCE(faturamento_servicos, 0) + COALESCE(faturamento_produtos, 0)) DESC
 ");
-$stmt->execute([$inicio, $fim]);
+$stmt->execute([$inicio, $fim, $inicio, $fim, $inicio, $fim, $inicio, $fim]);
 $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
-// echo '<pre>';
-// var_dump($profissionais);
-// echo '</pre>';
+
 // Calcular comissões
 foreach ($profissionais as &$prof) {
-    $prof['comissao_servicos'] = ($prof['faturamento_servicos'] * ($prof['comissao_servico'] ?? 0)) / 100;
-    $prof['comissao_produtos'] = ($prof['faturamento_produtos'] * ($prof['comissao_produto'] ?? 0)) / 100;
+    $prof['comissao_servicos'] = ($prof['faturamento_servicos'] * $prof['comissao_servico']) / 100;
+    $prof['comissao_produtos'] = ($prof['faturamento_produtos'] * $prof['comissao_produto']) / 100;
     $prof['comissao_total'] = $prof['comissao_servicos'] + $prof['comissao_produtos'];
     $prof['faturamento_total'] = $prof['faturamento_servicos'] + $prof['faturamento_produtos'];
 }
@@ -155,10 +167,10 @@ $top_servicos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // 6. TOP 5 PRODUTOS
 // ==================================================
 $stmt = $pdo->prepare("
-    SELECT 
+    SELECT
         p.nome,
         SUM(vp.quantidade) as qtd_vendida,
-        COALESCE(SUM(vp.valor_unitario), 0) as faturamento
+        COALESCE(SUM(vp.valor_unitario * vp.quantidade), 0) as faturamento
     FROM atendimentos a
     JOIN vendas_produtos vp ON vp.atendimento_id = a.id
     JOIN produtos p ON p.id = vp.produto_id
@@ -297,7 +309,7 @@ $faturamento_medio_dia = $faturamento_total / $dias_mes;
                 <div class="metric-label">
                     <i class="fas fa-money-bill-wave me-2"></i>Comissões
                 </div>
-                <div class="metric-large text-warning"><?php print_r($total_comissoes)//echo formatar_moeda($total_comissoes); ?></div>
+                <div class="metric-large text-warning"><?php echo formatar_moeda($total_comissoes); ?></div>
                 <small class="text-muted">
                     <?php echo count($profissionais); ?> profissionais
                 </small>
@@ -311,7 +323,7 @@ $faturamento_medio_dia = $faturamento_total / $dias_mes;
                 </div>
                 <div class="metric-large text-danger"><?php echo formatar_moeda($total_vales); ?></div>
                 <small class="text-muted">
-                    Líquido: <?php echo formatar_moeda($total_comissoes - $total_vales); ?>
+                    Líquido: <?php echo formatar_moeda(($total_comissoes + $faturamento_gorjetas_total) - $total_vales); ?>
                 </small>
             </div>
         </div>
@@ -430,7 +442,7 @@ $faturamento_medio_dia = $faturamento_total / $dias_mes;
                             <div class="col-6">
                                 <small class="text-muted">Gorjetas:</small>
                                 <strong class="d-block text-danger">
-                                    <?php echo formatar_moeda($faturamento_gorjetas); ?>
+                                    <?php echo formatar_moeda($prof['gorjetas']); ?>
                                 </strong>
                             </div>
                         </div>
@@ -441,7 +453,7 @@ $faturamento_medio_dia = $faturamento_total / $dias_mes;
                     <div class="prof-row" style="background: linear-gradient(135deg, #6d4c41, #f06292); color: white;">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">TOTAL A PAGAR</h5>
-                            <h3 class="mb-0"><?php echo formatar_moeda($total_comissoes + $faturamento_gorjetas); ?></h3>
+                            <h3 class="mb-0"><?php echo formatar_moeda($total_comissoes + $faturamento_gorjetas_total); ?></h3>
                         </div>
                         <?php if ($total_vales > 0): ?>
                         <hr style="border-color: rgba(255,255,255,0.3);">
@@ -451,7 +463,7 @@ $faturamento_medio_dia = $faturamento_total / $dias_mes;
                         </div>
                         <div class="d-flex justify-content-between">
                             <span>Líquido:</span>
-                            <strong><?php echo formatar_moeda($total_comissoes - $total_vales); ?></strong>
+                            <strong><?php echo formatar_moeda(($total_comissoes + $faturamento_gorjetas_total) - $total_vales); ?></strong>
                         </div>
                         <?php endif; ?>
                     </div>

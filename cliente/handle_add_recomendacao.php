@@ -18,8 +18,8 @@ if ($nota < 1 || $nota > 5 || !$agendamento_id) {
 }
 
 $stmt = $pdo->prepare("
-    SELECT a.profissional_id, a.servicos 
-    FROM agendamentos a 
+    SELECT a.profissional_id
+    FROM agendamentos a
     WHERE a.id = ? AND a.cliente_id = ? AND a.status = 'finalizado'
     LIMIT 1
 ");

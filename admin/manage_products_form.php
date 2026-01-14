@@ -8,11 +8,16 @@ requer_login('admin');
 
 
 $id = $_GET['id'] ?? null;
-$prod = $id ? $pdo->query("SELECT * FROM produtos WHERE id = $id")->fetch() : [];
+$prod = [];
+if ($id) {
+    $stmt = $pdo->prepare("SELECT * FROM produtos WHERE id = ?");
+    $stmt->execute([$id]);
+    $prod = $stmt->fetch() ?: [];
+}
 
 if ($_POST) {
-    $nome = $_POST['nome'];
-    $preco = str_replace(',', '.', $_POST['preco']);
+    $nome = $_POST['nome'] ?? '';
+    $preco = str_replace(',', '.', $_POST['preco'] ?? '0');
 
     if ($id) {
         $pdo->prepare("UPDATE produtos SET nome=?, preco_venda=? WHERE id=?")->execute([$nome, $preco, $id]);
