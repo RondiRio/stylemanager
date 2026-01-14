@@ -34,18 +34,30 @@ $profs = $stmt->fetchAll();
 $stmt = $pdo->prepare("SELECT id, nome, avatar FROM usuarios WHERE id = ? AND tipo = 'admin' LIMIT 1");
 $stmt->execute([$_SESSION['usuario_id']]);
 $admin_user = $stmt->fetch();
+
+// === BUSCAR CORES DA CONFIGURAÇÃO ===
+$stmt = $pdo->query("SELECT cor_primaria, cor_secundaria, cor_fundo FROM configuracoes WHERE id = 1");
+$config_cores = $stmt->fetch();
+$cor_primaria = $config_cores['cor_primaria'] ?? '#667eea';
+$cor_secundaria = $config_cores['cor_secundaria'] ?? '#764ba2';
+$cor_fundo = $config_cores['cor_fundo'] ?? '#f5f7fa';
+
+// Criar gradiente baseado nas cores configuradas
+$feed_gradient_primary = "linear-gradient(135deg, {$cor_primaria} 0%, {$cor_secundaria} 100%)";
 ?>
 <style>
-/* Feed Moderno - Estilos Customizados */
+/* Feed Moderno - Estilos Customizados com Cores Dinâmicas */
 :root {
-    --feed-gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --feed-gradient-primary: <?php echo $feed_gradient_primary; ?>;
     --feed-gradient-success: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     --feed-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     --feed-card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --cor-primaria: <?php echo $cor_primaria; ?>;
+    --cor-secundaria: <?php echo $cor_secundaria; ?>;
 }
 
 body {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: <?php echo $cor_fundo; ?>;
     min-height: 100vh;
 }
 
@@ -580,7 +592,7 @@ function previewMidia(input, tipo) {
 document.querySelectorAll('.btn-like').forEach(btn => {
     btn.addEventListener('click', () => {
         const postId = btn.dataset.post;
-        fetch('handle_like.php', {
+        fetch('../handlers/handle_like.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ post_id: postId, csrf_token: '<?php echo gerar_csrf_token(); ?>' })
@@ -590,7 +602,8 @@ document.querySelectorAll('.btn-like').forEach(btn => {
             if (data.success) {
                 btn.classList.toggle('btn-danger');
                 btn.classList.toggle('btn-outline-danger');
-                btn.querySelector('span').textContent = data.likes;
+                const span = btn.querySelector('span');
+                span.textContent = data.likes + (data.likes != 1 ? ' Curtidas' : ' Curtida');
             }
         });
     });
@@ -600,7 +613,7 @@ document.querySelectorAll('.btn-like').forEach(btn => {
 document.querySelectorAll('.btn-seguir').forEach(btn => {
     btn.addEventListener('click', () => {
         const usuarioId = btn.dataset.usuario;
-        fetch('handle_seguir.php', {
+        fetch('../handlers/handle_seguir.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ seguido_id: usuarioId, csrf_token: '<?php echo gerar_csrf_token(); ?>' })
@@ -608,9 +621,16 @@ document.querySelectorAll('.btn-seguir').forEach(btn => {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                btn.textContent = data.seguindo ? 'Seguindo' : 'Seguir';
-                btn.classList.toggle('btn-primary', data.seguindo);
-                btn.classList.toggle('btn-outline-primary', !data.seguindo);
+                // Atualizar texto e ícone do botão
+                if (data.seguindo) {
+                    btn.innerHTML = '<i class="fas fa-check me-1"></i>Seguindo';
+                    btn.classList.remove('btn-follow');
+                    btn.classList.add('btn-following');
+                } else {
+                    btn.innerHTML = '<i class="fas fa-user-plus me-1"></i>Seguir';
+                    btn.classList.remove('btn-following');
+                    btn.classList.add('btn-follow');
+                }
             }
         });
     });
