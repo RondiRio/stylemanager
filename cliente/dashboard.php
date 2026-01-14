@@ -8,10 +8,16 @@ requer_login('cliente');
 include '../includes/header.php';
 
 // === CONFIGURAÇÃO DO SALÃO ===
-$stmt = $pdo->prepare("SELECT agendamento_ativo FROM configuracoes WHERE id = 1");
+$stmt = $pdo->prepare("SELECT agendamento_ativo, cor_primaria, cor_secundaria, cor_fundo FROM configuracoes WHERE id = 1");
 $stmt->execute();
 $config = $stmt->fetch();
 $agendamento_ativo = $config['agendamento_ativo'] ?? 0;
+$cor_primaria = $config['cor_primaria'] ?? '#667eea';
+$cor_secundaria = $config['cor_secundaria'] ?? '#764ba2';
+$cor_fundo = $config['cor_fundo'] ?? '#f5f7fa';
+
+// Criar gradiente baseado nas cores configuradas
+$feed_gradient_primary = "linear-gradient(135deg, {$cor_primaria} 0%, {$cor_secundaria} 100%)";
 
 // === POSTS DO FEED (COM VÍDEOS) ===
 $stmt = $pdo->prepare("
@@ -42,16 +48,18 @@ $stmt->execute([$_SESSION['usuario_id']]);
 $clients = $stmt->fetch();
 ?>
 <style>
-/* Feed Moderno - Estilos Customizados */
+/* Feed Moderno - Estilos Customizados com Cores Dinâmicas */
 :root {
-    --feed-gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --feed-gradient-primary: <?php echo $feed_gradient_primary; ?>;
     --feed-gradient-success: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     --feed-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     --feed-card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --cor-primaria: <?php echo $cor_primaria; ?>;
+    --cor-secundaria: <?php echo $cor_secundaria; ?>;
 }
 
 body {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: <?php echo $cor_fundo; ?>;
     min-height: 100vh;
 }
 
@@ -588,7 +596,7 @@ function previewMidia(input, tipo) {
 document.querySelectorAll('.btn-like').forEach(btn => {
     btn.addEventListener('click', () => {
         const postId = btn.dataset.post;
-        fetch('handle_like.php', {
+        fetch('../handlers/handle_like.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ post_id: postId, csrf_token: '<?php echo gerar_csrf_token(); ?>' })
@@ -608,7 +616,7 @@ document.querySelectorAll('.btn-like').forEach(btn => {
 document.querySelectorAll('.btn-seguir').forEach(btn => {
     btn.addEventListener('click', () => {
         const usuarioId = btn.dataset.usuario;
-        fetch('handle_seguir.php', {
+        fetch('../handlers/handle_seguir.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ seguido_id: usuarioId, csrf_token: '<?php echo gerar_csrf_token(); ?>' })
