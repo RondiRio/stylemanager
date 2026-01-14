@@ -17,6 +17,17 @@ if ($_POST) {
     $fechamento = $_POST['fechamento'];
     $intervalo = $_POST['intervalo'];
     $prazo = $_POST['prazo_cancelamento'];
+    $agendamento_ativo = isset($_POST['agendamento_ativo']) ? 1 : 0;
+    $profissional_ve_agenda = isset($_POST['profissional_ve_agenda']) ? 1 : 0;
+
+    // Dias de funcionamento
+    $funciona_domingo = isset($_POST['funciona_domingo']) ? 1 : 0;
+    $funciona_segunda = isset($_POST['funciona_segunda']) ? 1 : 0;
+    $funciona_terca = isset($_POST['funciona_terca']) ? 1 : 0;
+    $funciona_quarta = isset($_POST['funciona_quarta']) ? 1 : 0;
+    $funciona_quinta = isset($_POST['funciona_quinta']) ? 1 : 0;
+    $funciona_sexta = isset($_POST['funciona_sexta']) ? 1 : 0;
+    $funciona_sabado = isset($_POST['funciona_sabado']) ? 1 : 0;
 
     // Upload de logo
     if (!empty($_FILES['logo']['name'])) {
@@ -26,8 +37,8 @@ if ($_POST) {
         $pdo->prepare("UPDATE configuracoes SET logo = ? WHERE id = 1")->execute([$nome]);
     }
 
-    $pdo->prepare("UPDATE configuracoes SET tipo_empresa=?, cor_primaria=?, cor_secundaria=?, cor_fundo=?, horario_abertura=?, horario_fechamento=?, intervalo_slot=?, prazo_cancelamento_horas=? WHERE id=1")
-        ->execute([$tipo, $primaria, $secundaria, $fundo, $abertura, $fechamento, $intervalo, $prazo]);
+    $pdo->prepare("UPDATE configuracoes SET tipo_empresa=?, cor_primaria=?, cor_secundaria=?, cor_fundo=?, horario_abertura=?, horario_fechamento=?, intervalo_slot=?, prazo_cancelamento_horas=?, agendamento_ativo=?, profissional_ve_agenda=?, funciona_domingo=?, funciona_segunda=?, funciona_terca=?, funciona_quarta=?, funciona_quinta=?, funciona_sexta=?, funciona_sabado=? WHERE id=1")
+        ->execute([$tipo, $primaria, $secundaria, $fundo, $abertura, $fechamento, $intervalo, $prazo, $agendamento_ativo, $profissional_ve_agenda, $funciona_domingo, $funciona_segunda, $funciona_terca, $funciona_quarta, $funciona_quinta, $funciona_sexta, $funciona_sabado]);
 
     redirecionar_com_mensagem('configuracoes.php', 'Configurações salvas!');
 }
@@ -96,12 +107,106 @@ include '../includes/header.php';
         <i class="fas fa-key me-1"></i>Configurar E-mail
     </a>
 </div>
-    <!-- // admin/configuracoes.php -->
-    <label>
-        <input type="checkbox" name="agendamento_ativo" <?php echo $config['agendamento_ativo'] ? 'checked' : ''; ?>>
-        Permitir agendamento online
-    </label>
-    <button type="submit" class="btn btn-success mt-3">Salvar</button>
+    <!-- Configurações de Agendamento -->
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+            <h6 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Configurações de Agendamento</h6>
+        </div>
+        <div class="card-body">
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" name="agendamento_ativo" id="agendamento_ativo" <?php echo $config['agendamento_ativo'] ? 'checked' : ''; ?>>
+                <label class="form-check-label" for="agendamento_ativo">
+                    <strong>Permitir agendamento online</strong>
+                    <br>
+                    <small class="text-muted">Clientes poderão fazer agendamentos através do site</small>
+                </label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="profissional_ve_agenda" id="profissional_ve_agenda" <?php echo ($config['profissional_ve_agenda'] ?? 0) ? 'checked' : ''; ?>>
+                <label class="form-check-label" for="profissional_ve_agenda">
+                    <strong>Profissionais podem ver agenda</strong>
+                    <br>
+                    <small class="text-muted">Profissionais terão acesso à tela de agenda com seus agendamentos</small>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configurações de Dias de Funcionamento -->
+    <div class="card mb-3">
+        <div class="card-header bg-info text-white">
+            <h6 class="mb-0"><i class="fas fa-calendar-week me-2"></i>Dias de Funcionamento</h6>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-3">
+                <i class="fas fa-info-circle me-1"></i>
+                Selecione os dias da semana em que a empresa funciona. Nos dias não selecionados, o sistema não permitirá agendamentos.
+            </p>
+            <div class="row">
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="funciona_domingo" id="funciona_domingo" <?php echo ($config['funciona_domingo'] ?? 0) ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="funciona_domingo">
+                            <i class="fas fa-calendar-day me-1"></i><strong>Domingo</strong>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="funciona_segunda" id="funciona_segunda" <?php echo ($config['funciona_segunda'] ?? 1) ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="funciona_segunda">
+                            <i class="fas fa-calendar-day me-1"></i><strong>Segunda</strong>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="funciona_terca" id="funciona_terca" <?php echo ($config['funciona_terca'] ?? 1) ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="funciona_terca">
+                            <i class="fas fa-calendar-day me-1"></i><strong>Terça</strong>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="funciona_quarta" id="funciona_quarta" <?php echo ($config['funciona_quarta'] ?? 1) ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="funciona_quarta">
+                            <i class="fas fa-calendar-day me-1"></i><strong>Quarta</strong>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="funciona_quinta" id="funciona_quinta" <?php echo ($config['funciona_quinta'] ?? 1) ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="funciona_quinta">
+                            <i class="fas fa-calendar-day me-1"></i><strong>Quinta</strong>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="funciona_sexta" id="funciona_sexta" <?php echo ($config['funciona_sexta'] ?? 1) ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="funciona_sexta">
+                            <i class="fas fa-calendar-day me-1"></i><strong>Sexta</strong>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="funciona_sabado" id="funciona_sabado" <?php echo ($config['funciona_sabado'] ?? 1) ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="funciona_sabado">
+                            <i class="fas fa-calendar-day me-1"></i><strong>Sábado</strong>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">
+        <i class="fas fa-save me-2"></i>Salvar Configurações
+    </button>
 </form>
 
 <script>

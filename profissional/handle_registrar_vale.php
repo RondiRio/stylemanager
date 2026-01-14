@@ -10,14 +10,14 @@ if (!verificar_csrf_token($_POST['csrf_token'] ?? '')) {
 }
 
 $valor = (float)($_POST['valor'] ?? 0);
-$descricao = trim($_POST['descricao'] ?? '');
+$motivo = trim($_POST['descricao'] ?? '');
 
 if ($valor <= 0) redirecionar_com_mensagem('dashboard.php', 'Valor inválido.', 'danger');
 
 $pdo->prepare("
-    INSERT INTO vales (profissional_id, vale, descricao, data_vale)
-    VALUES (?, ?, ?, NOW())
-")->execute([$_SESSION['usuario_id'], $valor, $descricao]);
+    INSERT INTO vales (profissional_id, valor, motivo, data_vale)
+    VALUES (?, ?, ?, CURDATE())
+")->execute([$_SESSION['usuario_id'], $valor, $motivo]);
 
 redirecionar_com_mensagem('dashboard.php', "Vale registrado com sucesso!", 'success');
 ?>

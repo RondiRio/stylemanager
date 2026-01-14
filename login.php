@@ -73,9 +73,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['ac
                 // Log de acesso (opcional)
                 try {
                     $pdo->prepare("
-                        INSERT INTO logs_sistema (tipo, descricao, usuario_id, criado_em) 
-                        VALUES ('login', ?, ?, NOW())
-                    ")->execute(['Login realizado', $usuario['id']]);
+                        INSERT INTO logs_sistema (usuario_id, acao, detalhes, ip_address, user_agent)
+                        VALUES (?, 'login', 'Login realizado', ?, ?)
+                    ")->execute([
+                        $usuario['id'],
+                        $_SERVER['REMOTE_ADDR'] ?? null,
+                        $_SERVER['HTTP_USER_AGENT'] ?? null
+                    ]);
                 } catch (Exception $e) {
                     // Ignora se tabela de logs não existir
                 }

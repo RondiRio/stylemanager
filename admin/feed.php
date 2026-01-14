@@ -1,23 +1,17 @@
 <?php
-// cliente/dashboard.php (FEED PROFISSIONAL + EDIÇÃO + VÍDEOS)
+// admin/feed.php (FEED PARA ADMINISTRADOR)
 require_once '../includes/auth.php';
 require_once '../includes/db_connect.php';
 require_once '../includes/utils.php';
-$titulo = "Feed";
-requer_login('cliente');
+$titulo = "Feed Social";
+requer_login('admin');
 include '../includes/header.php';
 
-// === CONFIGURAÇÃO DO SALÃO ===
-$stmt = $pdo->prepare("SELECT agendamento_ativo FROM configuracoes WHERE id = 1");
-$stmt->execute();
-$config = $stmt->fetch();
-$agendamento_ativo = $config['agendamento_ativo'] ?? 0;
-
-// === POSTS DO FEED (COM VÍDEOS) ===
+// === POSTS DO FEED (TODOS OS POSTS) ===
 $stmt = $pdo->prepare("
     SELECT
         p.id, p.usuario_id, p.tipo, p.midia_url, p.legenda, p.created_at,
-        u.nome AS autor_nome, u.avatar AS autor_avatar,
+        u.nome AS autor_nome, u.avatar AS autor_avatar, u.tipo AS autor_tipo,
         (SELECT COUNT(*) FROM post_likes WHERE post_id = p.id) AS likes,
         EXISTS(SELECT 1 FROM post_likes WHERE post_id = p.id AND usuario_id = ?) AS curtiu,
         EXISTS(SELECT 1 FROM seguidores WHERE seguidor_id = ? AND seguido_id = p.usuario_id) AS segue
@@ -26,7 +20,7 @@ $stmt = $pdo->prepare("
     WHERE p.usuario_id IN (SELECT seguido_id FROM seguidores WHERE seguidor_id = ?)
        OR p.usuario_id = ?
     ORDER BY p.created_at DESC
-    LIMIT 20
+    LIMIT 30
 ");
 $stmt->execute([$_SESSION['usuario_id'], $_SESSION['usuario_id'], $_SESSION['usuario_id'], $_SESSION['usuario_id']]);
 $posts = $stmt->fetchAll();
@@ -36,10 +30,10 @@ $stmt = $pdo->prepare("SELECT id, nome, avatar FROM usuarios WHERE tipo = 'profi
 $stmt->execute();
 $profs = $stmt->fetchAll();
 
-// === CLIENTE ATIVO ===
-$stmt = $pdo->prepare("SELECT id, nome, avatar FROM usuarios WHERE id = ? AND tipo = 'cliente' AND ativo = 1 LIMIT 1");
+// === ADMIN ATIVO ===
+$stmt = $pdo->prepare("SELECT id, nome, avatar FROM usuarios WHERE id = ? AND tipo = 'admin' LIMIT 1");
 $stmt->execute([$_SESSION['usuario_id']]);
-$clients = $stmt->fetch();
+$admin_user = $stmt->fetch();
 ?>
 <style>
 /* Feed Moderno - Estilos Customizados */
@@ -271,7 +265,7 @@ body {
                     <h6 class="text-white mb-0">Meu Perfil</h6>
                 </div>
                 <div class="card-body text-center pt-0">
-                    <img src="../assets/img/avatars/<?php echo $clients['avatar'] ?? 'default.png'; ?>" class="rounded-circle profile-avatar" alt="Avatar">
+                    <img src="../assets/img/avatars/<?php echo $admin_user['avatar'] ?? 'default.png'; ?>" class="rounded-circle profile-avatar" alt="Avatar">
                     <h5 class="mt-2 mb-1"><?php echo htmlspecialchars($_SESSION['nome']); ?></h5>
                     <p class="text-muted small">@<?php echo strtolower(str_replace(' ', '', $_SESSION['nome'])); ?></p>
                     <a href="perfil.php" class="btn btn-sm btn-action btn-outline-primary w-100 mt-2">
@@ -280,28 +274,26 @@ body {
                 </div>
             </div>
 
-            <?php if ($agendamento_ativo): ?>
             <div class="sidebar-card fade-in">
                 <div class="sidebar-card-header">
-                    <i class="fas fa-calendar-check me-2"></i>Agendar Serviço
+                    <i class="fas fa-tachometer-alt me-2"></i>Painel Admin
                 </div>
                 <div class="card-body">
-                    <p class="text-muted small mb-3">Reserve seu horário com nossos profissionais</p>
-                    <a href="agendar.php" class="btn btn-success btn-action w-100">
-                        <i class="fas fa-plus me-2"></i>Novo Agendamento
+                    <p class="text-muted small mb-3">Acesse o dashboard administrativo</p>
+                    <a href="dashboard.php" class="btn btn-primary btn-action w-100">
+                        <i class="fas fa-chart-line me-2"></i>Dashboard
                     </a>
                 </div>
             </div>
-            <?php endif; ?>
 
             <div class="sidebar-card fade-in">
                 <div class="sidebar-card-header">
-                    <i class="fas fa-clock me-2"></i>Meus Agendamentos
+                    <i class="fas fa-calendar-alt me-2"></i>Agenda Geral
                 </div>
                 <div class="card-body">
-                    <p class="text-muted small mb-3">Veja seus agendamentos futuros e histórico</p>
-                    <a href="view_agendamentos.php" class="btn btn-action btn-outline-secondary w-100">
-                        <i class="fas fa-list me-2"></i>Ver Agendamentos
+                    <p class="text-muted small mb-3">Visualize todos os agendamentos</p>
+                    <a href="view_agenda_geral.php" class="btn btn-action btn-outline-secondary w-100">
+                        <i class="fas fa-calendar me-2"></i>Ver Agenda
                     </a>
                 </div>
             </div>
@@ -312,10 +304,10 @@ body {
             <!-- POSTAR FOTO/VÍDEO -->
             <div class="create-post-card fade-in">
                 <div class="card-body p-4">
-                    <form id="formPostar" action="handle_postar.php" method="POST" enctype="multipart/form-data">
+                    <form id="formPostar" action="../handlers/handle_postar.php" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="<?php echo gerar_csrf_token(); ?>">
                         <div class="d-flex align-items-start gap-3">
-                            <img src="../assets/img/avatars/<?php echo $clients['avatar'] ?? 'default.png'; ?>" class="rounded-circle post-author-avatar" alt="Avatar">
+                            <img src="../assets/img/avatars/<?php echo $admin_user['avatar'] ?? 'default.png'; ?>" class="rounded-circle post-author-avatar" alt="Avatar">
                             <div class="flex-grow-1">
                                 <textarea name="legenda" class="form-control create-post-textarea mb-3" rows="3" placeholder="Compartilhe seu novo visual ou experiência..."></textarea>
                                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">

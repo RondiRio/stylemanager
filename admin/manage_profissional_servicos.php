@@ -8,9 +8,15 @@ requer_login(tipo_necessario: 'admin');
 
 
 $prof_id = $_GET['id'] ?? 0;
-$prof = $pdo->query("SELECT nome FROM usuarios WHERE id = $prof_id")->fetch();
+$stmt = $pdo->prepare("SELECT nome FROM usuarios WHERE id = ?");
+$stmt->execute([$prof_id]);
+$prof = $stmt->fetch() ?: [];
+
 $servicos = $pdo->query("SELECT id, nome FROM servicos WHERE ativo = 1")->fetchAll();
-$habilitados = $pdo->query("SELECT servico_id FROM profissional_servicos WHERE profissional_id = $prof_id")->fetchAll(PDO::FETCH_COLUMN);
+
+$stmt = $pdo->prepare("SELECT servico_id FROM profissional_servicos WHERE profissional_id = ?");
+$stmt->execute([$prof_id]);
+$habilitados = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 if ($_POST && verificar_csrf_token($_POST['csrf_token'] ?? '')) {
     $pdo->prepare("DELETE FROM profissional_servicos WHERE profissional_id = ?")->execute([$prof_id]);
@@ -24,7 +30,7 @@ if ($_POST && verificar_csrf_token($_POST['csrf_token'] ?? '')) {
 }
 include '../includes/header.php';
 ?>
-<h2>Serviços Habilitados - <?php echo htmlspecialchars($prof['nome']); ?></h2>
+<h2>Serviços Habilitados - <?php echo htmlspecialchars($prof['nome'] ?? 'Profissional'); ?></h2>
 <form method="POST">
     <input type="hidden" name="csrf_token" value="<?php echo gerar_csrf_token(); ?>">
     <div class="row row-cols-1 row-cols-md-3 g-3">

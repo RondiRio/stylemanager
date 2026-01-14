@@ -8,7 +8,9 @@ requer_login('admin');
 
 
 $prof_id = $_GET['id'] ?? 0;
-$comissoes = $pdo->query("SELECT tipo, percentual FROM comissoes WHERE profissional_id = $prof_id")->fetchAll(PDO::FETCH_KEY_PAIR);
+$stmt = $pdo->prepare("SELECT tipo, percentual FROM comissoes WHERE profissional_id = ?");
+$stmt->execute([$prof_id]);
+$comissoes = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
 if ($_POST && verificar_csrf_token($_POST['csrf_token'] ?? '')) {
 

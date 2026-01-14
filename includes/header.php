@@ -3,7 +3,10 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="description" content="Sistema completo para gestão de salão de beleza">
     <title><?php echo $titulo ?? 'Sistema de Beleza'; ?></title>
     
@@ -22,7 +25,8 @@
     <link href="../assets/css/custom.css" rel="stylesheet">
     <link href="../assets/css/components.css" rel="stylesheet">
     <link href="../assets/css/animations.css" rel="stylesheet">
-    
+    <link href="../assets/css/mobile-responsive.css" rel="stylesheet">
+
     <!-- Tema Dinâmico -->
     <?php aplicar_tema_css(); ?>
     
@@ -33,6 +37,36 @@
             display: flex;
             flex-direction: column;
             background: var(--cor-fundo);
+        }
+        .logoMobile {
+            max-width: 100%;
+            height: 40;
+        }
+        
+        @media (max-width: 576px) {
+            .navbar-brand img {
+            height: 32px !important;
+            }
+            
+            .navbar-brand span {
+            display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar-brand {
+            font-size: 1.25rem;
+            }
+            
+            .navbar-brand img {
+            height: 35px !important;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .navbar-brand img {
+            height:  40  !important;
+            }
         }
         
         .navbar-custom {
@@ -232,11 +266,11 @@
             $config_logo = $pdo->query("SELECT logo FROM configuracoes WHERE id = 1")->fetch();
             if (!empty($config_logo['logo'])): 
             ?>
-                <img src="../assets/img/<?php echo $config_logo['logo']; ?>" alt="Logo" height="40" class="animate-fade-in">
+                <img src="../assets/img/<?php echo $config_logo['logo']; ?>" alt="Logo" height="40" class="animate-fade-in logoMobile">
             <?php else: ?>
                 <i class="fas fa-cut"></i>
             <?php endif; ?>
-            <span>Barbearia JB</span>
+            <span></span>
         </a>
         
         <!-- Toggle para mobile -->
@@ -253,6 +287,11 @@
                             <i class="fas fa-home"></i> Feed
                         </a>
                     </li>
+                    <?php
+                    // Verificar se agendamento está ativo para mostrar links de agendamento
+                    $config_cliente_agend = $pdo->query("SELECT agendamento_ativo FROM configuracoes WHERE id = 1")->fetch();
+                    if ($config_cliente_agend && $config_cliente_agend['agendamento_ativo']):
+                    ?>
                     <li class="nav-item">
                         <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'agendar.php' ? 'active' : ''; ?>" href="agendar.php">
                             <i class="fas fa-calendar-plus"></i> Agendar
@@ -263,19 +302,41 @@
                             <i class="fas fa-list"></i> Meus Agendamentos
                         </a>
                     </li>
-                    
+                    <?php endif; ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'configuracoes.php' ? 'active' : ''; ?>" href="configuracoes.php">
+                            <i class="fas fa-user-cog"></i> Configurações
+                        </a>
+                    </li>
+
                 <?php elseif ($_SESSION['tipo'] === 'profissional'): ?>
                     <li class="nav-item">
                         <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'dashboard.php' ? 'active' : ''; ?>" href="dashboard.php">
                             <i class="fas fa-tachometer-alt"></i> Dashboard
                         </a>
                     </li>
+                    <?php
+                    // Verificar se agendamento está ativo E se profissional pode ver agenda
+                    $config_agendamento = $pdo->query("SELECT agendamento_ativo, profissional_ve_agenda FROM configuracoes WHERE id = 1")->fetch();
+                    if ($config_agendamento && $config_agendamento['agendamento_ativo'] && ($config_agendamento['profissional_ve_agenda'] ?? 0)):
+                    ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'view_agenda_dia.php' ? 'active' : ''; ?>" href="view_agenda_dia.php">
+                            <i class="fas fa-calendar-alt"></i> Agenda
+                        </a>
+                    </li>
+                    <?php endif; ?>
                     <li class="nav-item">
                         <a class="nav-link" href="feed_profissional.php">
                             <i class="fas fa-images"></i> Feed
                         </a>
                     </li>
-                    
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'configuracoes.php' ? 'active' : ''; ?>" href="configuracoes.php">
+                            <i class="fas fa-user-cog"></i> Configurações
+                        </a>
+                    </li>
+
                 <?php elseif ($_SESSION['tipo'] === 'admin'): ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -297,6 +358,22 @@
                             </a></li>
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'feed.php' ? 'active' : ''; ?>" href="feed.php">
+                            <i class="fas fa-images"></i> Feed Social
+                        </a>
+                    </li>
+                    <?php
+                    // Verificar se agendamento está ativo para mostrar agenda
+                    $config_agend = $pdo->query("SELECT agendamento_ativo FROM configuracoes WHERE id = 1")->fetch();
+                    if ($config_agend && $config_agend['agendamento_ativo']):
+                    ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'view_agenda_geral.php' ? 'active' : ''; ?>" href="view_agenda_geral.php">
+                            <i class="fas fa-calendar-week"></i> Agenda
+                        </a>
+                    </li>
+                    <?php endif; ?>
                     <li class="nav-item">
                         <a class="nav-link" href="view_reports.php">
                             <i class="fas fa-chart-line"></i> Relatórios

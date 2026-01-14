@@ -8,24 +8,42 @@ requer_login('admin');
 
 
 $id = $_GET['id'] ?? null;
-$prof = $id ? $pdo->query("SELECT * FROM usuarios WHERE id = $id")->fetch() : [];
+$prof = [];
+if ($id) {
+    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = ?");
+    $stmt->execute([$id]);
+    $prof = $stmt->fetch() ?: [];
+}
 
 if ($_POST) {
     $nome = $_POST['nome'];
     $email = $_POST['email'];
     $telefone = $_POST['telefone'];
-    $senha = !empty($_POST['senha']) ? password_hash($_POST['senha'], PASSWORD_DEFAULT) : ($prof['senha'] ?? '');
+    $senha_nova = !empty($_POST['senha']) ? password_hash($_POST['senha'], PASSWORD_DEFAULT) : null;
 
-    if ($id) {
+    if ($id && !empty($prof)) {
+        // Atualizar profissional existente
         $sql = "UPDATE usuarios SET nome=?, email=?, telefone=?";
         $params = [$nome, $email, $telefone];
-        if ($senha !== $prof['senha']) { $sql .= ", senha=?"; $params[] = $senha; }
+
+        // Se digitou nova senha, atualizar
+        if ($senha_nova) {
+            $sql .= ", senha=?";
+            $params[] = $senha_nova;
+        }
+
         $sql .= " WHERE id=?";
         $params[] = $id;
         $pdo->prepare($sql)->execute($params);
     } else {
+        // Criar novo profissional - senha é obrigatória
+        if (!$senha_nova) {
+            redirecionar_com_mensagem('manage_profissionais_form.php', 'Senha é obrigatória para novos profissionais.', 'danger');
+            exit;
+        }
+
         $pdo->prepare("INSERT INTO usuarios (nome, email, senha, telefone, tipo) VALUES (?, ?, ?, ?, 'profissional')")
-            ->execute([$nome, $email, $senha, $telefone]);
+            ->execute([$nome, $email, $senha_nova, $telefone]);
             $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = ?");
             $stmt->execute([$email]);
             $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);

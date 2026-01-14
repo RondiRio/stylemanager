@@ -35,18 +35,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // Cadastrar usuário
             $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
-            $token_verificacao = bin2hex(random_bytes(32));
-            
+
             try {
                 $stmt = $pdo->prepare("
-                    INSERT INTO usuarios (nome, email, telefone, senha, tipo, token_verificacao, ativo, email_verificado)
-                    VALUES (?, ?, ?, ?, 'cliente', ?, 1, 0)
+                    INSERT INTO usuarios (nome, email, telefone, senha, tipo, ativo)
+                    VALUES (?, ?, ?, ?, 'cliente', 1)
                 ");
-                $stmt->execute([$nome, $email, $telefone, $senha_hash, $token_verificacao]);
-                
-                // Enviar e-mail de verificação
+                $stmt->execute([$nome, $email, $telefone, $senha_hash]);
+
+                // Enviar e-mail de boas-vindas (opcional)
                 $base_url = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
-                $link_verificacao = $base_url . dirname($_SERVER['PHP_SELF']) . "/verify_email.php?token=$token_verificacao";
                 
                 $corpo_email = "
                     <!DOCTYPE html>
@@ -69,13 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class='content'>
                                 <h2>Olá, $nome!</h2>
                                 <p>Obrigado por se cadastrar em nosso sistema.</p>
-                                <p>Para ativar sua conta e começar a agendar serviços, clique no botão abaixo:</p>
+                                <p>Sua conta foi criada com sucesso! Você já pode fazer login e começar a agendar serviços.</p>
                                 <p style='text-align: center;'>
-                                    <a href='$link_verificacao' class='button'>Verificar E-mail</a>
+                                    <a href='$base_url/login.php' class='button'>Fazer Login</a>
                                 </p>
-                                <p><small>Ou copie e cole este link no navegador:<br>
-                                <a href='$link_verificacao'>$link_verificacao</a></small></p>
-                                <p><strong>Este link expira em 24 horas.</strong></p>
                             </div>
                             <div class='footer'>
                                 <p>Se você não se cadastrou, ignore este e-mail.</p>
@@ -86,13 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </html>
                 ";
                 
-                $email_enviado = enviar_email($email, 'Confirme seu cadastro', $corpo_email, $nome);
-                
-                if ($email_enviado) {
-                    $sucesso = "Cadastro realizado! Enviamos um e-mail de verificação para <strong>$email</strong>. Verifique sua caixa de entrada (e spam).";
-                } else {
-                    $sucesso = "Cadastro realizado! Você já pode fazer login, mas recomendamos verificar seu e-mail.";
-                }
+                $email_enviado = enviar_email($email, 'Bem-vindo ao Sistema', $corpo_email, $nome);
+
+                $sucesso = "Cadastro realizado com sucesso! Você já pode fazer login.";
                 
             } catch (PDOException $e) {
                 $erro = 'Erro ao cadastrar: ' . $e->getMessage();
@@ -197,35 +188,9 @@ $token = $_GET['token'] ?? '';
 $mensagem = '';
 $tipo = 'danger';
 
-if (!$token) {
-    $mensagem = 'Token de verificação não informado.';
-} else {
-    $stmt = $pdo->prepare("
-        SELECT id, nome, email 
-        FROM usuarios 
-        WHERE token_verificacao = ? 
-          AND email_verificado = 0
-    ");
-    $stmt->execute([$token]);
-    $usuario = $stmt->fetch();
-    
-    if (!$usuario) {
-        $mensagem = 'Token inválido ou e-mail já verificado.';
-    } else {
-        // Verificar e-mail
-        $stmt = $pdo->prepare("
-            UPDATE usuarios 
-            SET email_verificado = 1, 
-                email_verificado_em = NOW(),
-                token_verificacao = NULL
-            WHERE id = ?
-        ");
-        $stmt->execute([$usuario['id']]);
-        
-        $mensagem = 'E-mail verificado com sucesso! Você já pode fazer login.';
-        $tipo = 'success';
-    }
-}
+// Verificação de email desabilitada - funcionalidade não implementada no banco de dados
+$mensagem = 'Funcionalidade de verificação de e-mail não disponível. Entre em contato com o suporte.';
+$tipo = 'info';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">

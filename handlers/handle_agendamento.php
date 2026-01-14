@@ -53,17 +53,23 @@ $valor_total = array_reduce($servicos, function($sum, $s) {
 
 $pdo->beginTransaction();
 try {
-    // Criar agendamento (excluindo 'id' pois é auto-incremento, e definindo valores para os campos)
+    // Criar agendamento
     $stmt = $pdo->prepare("
-        INSERT INTO agendamentos 
-        (cliente_id, profissional_id, data, hora_inicio, status, criado_em, cancelado_em, atendimento_id, servicos, valor_total)
-        VALUES (?, ?, ?, ?, 'agendado', NOW(), NULL, NULL, ?, ?)
+        INSERT INTO agendamentos
+        (cliente_id, profissional_id, data, hora_inicio, status)
+        VALUES (?, ?, ?, ?, 'agendado')
     ");
-    $stmt->execute([$_SESSION['usuario_id'], $profissional_id, $data, $hora_inicio, json_encode($servicos), $valor_total]);
+    $stmt->execute([$_SESSION['usuario_id'], $profissional_id, $data, $hora_inicio]);
     $agendamento_id = $pdo->lastInsertId();
 
-    // Itens do agendamento: como não há tabela separada visível, assumimos armazenamento em JSON no campo 'servicos'
-    // Se houver uma tabela 'itens_agendamento', adicione um loop aqui para inserir cada serviço
+    // Inserir itens do agendamento na tabela agendamento_itens
+    $stmt_item = $pdo->prepare("
+        INSERT INTO agendamento_itens (agendamento_id, profissional_id, servico_id)
+        VALUES (?, ?, ?)
+    ");
+    foreach ($servicos as $servico) {
+        $stmt_item->execute([$agendamento_id, $profissional_id, $servico['id'] ?? 0]);
+    }
 
     $pdo->commit();
 

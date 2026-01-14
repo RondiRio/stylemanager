@@ -37,17 +37,17 @@ $comissao = $comissao_perc > 0 ? round($valor_total * $comissao_perc / 100, 2) :
 
 // Registrar venda
 $stmt_insert = $pdo->prepare("
-    INSERT INTO vendas_produto 
-    (profissional_id, produto_id, quantidade, valor_total, comissao_produto, metodo_pagamento, data_venda)
-    VALUES (?, ?, ?, ?, ?, ?, NOW())
+    INSERT INTO vendas_produtos
+    (profissional_id, produto_id, quantidade, valor_unitario, valor_total, comissao_produto)
+    VALUES (?, ?, ?, ?, ?, ?)
 ");
 $stmt_insert->execute([
     $_SESSION['usuario_id'],
     $produto_id,
     $qtd,
+    $produto['preco_venda'],
     $valor_total,
-    $comissao,
-    $metodo
+    $comissao
 ]);
 
 redirecionar_com_mensagem('dashboard.php', "Venda de {$qtd}x {$produto['nome']} registrada!", 'success');
