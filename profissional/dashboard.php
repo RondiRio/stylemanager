@@ -521,6 +521,9 @@ include '../includes/header.php';
 
             <!-- CLIENTES ATENDIDOS -->
             <?php if (!empty($clientes_atendidos_lista)): ?>
+                <?php
+                    // print_r($clientes_atendidos_lista);
+                    ?>
             <div class="card-glass mb-4">
                 <div class="card-glass-header" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
                     <h5 class="mb-0"><i class="fas fa-users me-2"></i>Clientes Atendidos Hoje (<?php echo count($clientes_atendidos_lista); ?>)</h5>
@@ -753,11 +756,6 @@ include '../includes/header.php';
                                         <div class="fw-bold text-danger">R$ <?php echo number_format($vale['valor'], 2, ',', '.'); ?></div>
                                         <small class="text-muted"><?php echo htmlspecialchars($vale['motivo']); ?></small>
                                     </div>
-                                    <a href="handle_delete_vale.php?id=<?php echo $vale['id']; ?>"
-                                       class="btn btn-sm btn-outline-danger"
-                                       onclick="return confirm('Excluir este vale?')">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
                                 </div>
                             </div>
                             <?php endforeach; ?>

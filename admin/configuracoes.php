@@ -29,6 +29,10 @@ if ($_POST) {
     $funciona_sexta = isset($_POST['funciona_sexta']) ? 1 : 0;
     $funciona_sabado = isset($_POST['funciona_sabado']) ? 1 : 0;
 
+    // Fechamento de caixa
+    $tipo_fechamento = $_POST['tipo_fechamento'] ?? 'mensal';
+    $gorjetas_requerem_aprovacao = isset($_POST['gorjetas_requerem_aprovacao']) ? 1 : 0;
+
     // Upload de logo
     if (!empty($_FILES['logo']['name'])) {
         $ext = pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
@@ -37,8 +41,8 @@ if ($_POST) {
         $pdo->prepare("UPDATE configuracoes SET logo = ? WHERE id = 1")->execute([$nome]);
     }
 
-    $pdo->prepare("UPDATE configuracoes SET tipo_empresa=?, cor_primaria=?, cor_secundaria=?, cor_fundo=?, horario_abertura=?, horario_fechamento=?, intervalo_slot=?, prazo_cancelamento_horas=?, agendamento_ativo=?, profissional_ve_agenda=?, funciona_domingo=?, funciona_segunda=?, funciona_terca=?, funciona_quarta=?, funciona_quinta=?, funciona_sexta=?, funciona_sabado=? WHERE id=1")
-        ->execute([$tipo, $primaria, $secundaria, $fundo, $abertura, $fechamento, $intervalo, $prazo, $agendamento_ativo, $profissional_ve_agenda, $funciona_domingo, $funciona_segunda, $funciona_terca, $funciona_quarta, $funciona_quinta, $funciona_sexta, $funciona_sabado]);
+    $pdo->prepare("UPDATE configuracoes SET tipo_empresa=?, cor_primaria=?, cor_secundaria=?, cor_fundo=?, horario_abertura=?, horario_fechamento=?, intervalo_slot=?, prazo_cancelamento_horas=?, agendamento_ativo=?, profissional_ve_agenda=?, funciona_domingo=?, funciona_segunda=?, funciona_terca=?, funciona_quarta=?, funciona_quinta=?, funciona_sexta=?, funciona_sabado=?, tipo_fechamento=?, gorjetas_requerem_aprovacao=? WHERE id=1")
+        ->execute([$tipo, $primaria, $secundaria, $fundo, $abertura, $fechamento, $intervalo, $prazo, $agendamento_ativo, $profissional_ve_agenda, $funciona_domingo, $funciona_segunda, $funciona_terca, $funciona_quarta, $funciona_quinta, $funciona_sexta, $funciona_sabado, $tipo_fechamento, $gorjetas_requerem_aprovacao]);
 
     redirecionar_com_mensagem('configuracoes.php', 'Configurações salvas!');
 }
@@ -200,6 +204,53 @@ include '../includes/header.php';
                         </label>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configurações de Fechamento de Caixa -->
+    <div class="card mb-3">
+        <div class="card-header bg-success text-white">
+            <h6 class="mb-0"><i class="fas fa-cash-register me-2"></i>Fechamento de Caixa</h6>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-3">
+                <i class="fas fa-info-circle me-1"></i>
+                Configure o período de fechamento de caixa e controle de gorjetas/vales dos profissionais.
+            </p>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="tipo_fechamento" class="form-label">
+                        <i class="fas fa-calendar-alt me-1"></i><strong>Período de Fechamento</strong>
+                    </label>
+                    <select name="tipo_fechamento" id="tipo_fechamento" class="form-select">
+                        <option value="diario" <?php echo ($config['tipo_fechamento'] ?? 'mensal') == 'diario' ? 'selected' : ''; ?>>Diário</option>
+                        <option value="semanal" <?php echo ($config['tipo_fechamento'] ?? 'mensal') == 'semanal' ? 'selected' : ''; ?>>Semanal</option>
+                        <option value="quinzenal" <?php echo ($config['tipo_fechamento'] ?? 'mensal') == 'quinzenal' ? 'selected' : ''; ?>>Quinzenal</option>
+                        <option value="mensal" <?php echo ($config['tipo_fechamento'] ?? 'mensal') == 'mensal' ? 'selected' : ''; ?>>Mensal</option>
+                    </select>
+                    <small class="text-muted">Define o período para fechamento e pagamento dos profissionais</small>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-coins me-1"></i><strong>Controle de Gorjetas</strong>
+                    </label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="gorjetas_requerem_aprovacao" id="gorjetas_requerem_aprovacao" <?php echo ($config['gorjetas_requerem_aprovacao'] ?? 0) ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="gorjetas_requerem_aprovacao">
+                            <strong>Gorjetas requerem aprovação</strong>
+                            <br>
+                            <small class="text-muted">Quando ativo, você deve aprovar ou negar cada gorjeta registrada</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info mb-0">
+                <i class="fas fa-lightbulb me-2"></i>
+                <strong>Informação:</strong> Os vales sempre requerem aprovação do administrador. Use a tela de "Aprovar Vales" para gerenciá-los.
             </div>
         </div>
     </div>
