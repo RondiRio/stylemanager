@@ -379,6 +379,23 @@
                             <i class="fas fa-chart-line"></i> Relatórios
                         </a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-money-bill-wave"></i> Financeiro
+                        </a>
+                        <ul class="dropdown-menu animate-fade-in-up">
+                            <li><a class="dropdown-item" href="fechamento_caixa.php">
+                                <i class="fas fa-cash-register me-2"></i>Fechamento de Caixa
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="aprovar_gorjetas.php">
+                                <i class="fas fa-coins me-2"></i>Aprovar Gorjetas
+                            </a></li>
+                            <li><a class="dropdown-item" href="aprovar_vales.php">
+                                <i class="fas fa-hand-holding-usd me-2"></i>Aprovar Vales
+                            </a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="configuracoes.php">
                             <i class="fas fa-sliders-h"></i> Configurações
