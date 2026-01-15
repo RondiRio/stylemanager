@@ -178,10 +178,10 @@ include '../includes/header.php';
                             </td>
                             <td class="text-center">
                                 <?php if ($g['status'] == 'pendente'): ?>
-                                    <button type="button" class="btn btn-sm btn-success me-1" onclick="aprovarGorjeta(<?php echo $g['id']; ?>)">
+                                    <button type="button" class="btn btn-sm btn-success me-1" onclick="aprovarGorjeta(<?php echo $g['id']; ?>)" title="Aprovar gorjeta">
                                         <i class="fas fa-check"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-danger" onclick="negarGorjeta(<?php echo $g['id']; ?>)">
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="negarGorjeta(<?php echo $g['id']; ?>)" title="Negar gorjeta">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 <?php else: ?>

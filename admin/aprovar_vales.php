@@ -130,7 +130,7 @@ include '../includes/header.php';
                             <th>Data</th>
                             <th>Profissional</th>
                             <th>Valor</th>
-                            <th>Descrição</th>
+                            <th>Motivo</th>
                             <th>Status</th>
                             <th class="text-center">Ações</th>
                         </tr>

@@ -65,15 +65,14 @@ if ($profissional_id) {
     // Comissões
     $stmt = $pdo->prepare("
         SELECT
-    COALESCE(SUM(sr.preco * c.servico / 100), 0) as total_comissoes,
-    COUNT(DISTINCT a.id) as qtd_atendimentos
-FROM atendimentos a
-JOIN servicos_realizados sr ON sr.atendimento_id = a.id
--- Busca direta na tabela comissoes pelo profissional_id
-LEFT JOIN comissoes c ON c.profissional_id = a.profissional_id
-WHERE a.profissional_id = ?
-  AND a.data_atendimento BETWEEN ? AND ?
-  AND a.status = 'concluido'
+            COALESCE(SUM(sr.preco * c.servico / 100), 0) as total_comissoes,
+            COUNT(DISTINCT a.id) as qtd_atendimentos
+        FROM atendimentos a
+        JOIN servicos_realizados sr ON sr.atendimento_id = a.id
+        LEFT JOIN comissoes c ON c.profissional_id = a.profissional_id
+        WHERE a.profissional_id = ?
+          AND a.data_atendimento BETWEEN ? AND ?
+          AND a.status = 'concluido'
     ");
     $stmt->execute([$profissional_id, $data_inicio, $data_fim]);
     $comissoes = $stmt->fetch();

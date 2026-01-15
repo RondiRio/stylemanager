@@ -40,7 +40,7 @@
         }
         .logoMobile {
             max-width: 100%;
-            height: 40;
+            height: 40px;
         }
         
         @media (max-width: 576px) {
@@ -65,7 +65,7 @@
         
         @media (max-width: 992px) {
             .navbar-brand img {
-            height:  40  !important;
+            height: 40px !important;
             }
         }
         
