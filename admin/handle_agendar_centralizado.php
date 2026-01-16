@@ -123,9 +123,8 @@ try {
             data_agendamento,
             hora_agendamento,
             status,
-            observacoes,
-            agendado_por
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, 'confirmado', ?, ?)
+            observacoes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, 'confirmado', ?)
     ");
 
     $stmt->execute([
@@ -136,65 +135,47 @@ try {
         $profissional_id,
         $data_agendamento,
         $hora_agendamento,
-        $observacoes,
-        $_SESSION['usuario_id']
+        $observacoes
     ]);
 
     $agendamento_id = $pdo->lastInsertId();
 
-    // Criar atendimento vinculado
-    $stmt = $pdo->prepare("
-        INSERT INTO atendimentos (
+    // Criar itens de agendamento (serviços vinculados ao agendamento)
+    $stmt_item = $pdo->prepare("
+        INSERT INTO agendamento_itens (
             agendamento_id,
             profissional_id,
-            cliente_id,
-            cliente_nome,
-            cliente_telefone,
-            data_atendimento,
-            status
-        ) VALUES (?, ?, ?, ?, ?, ?, 'pendente')
-    ");
-
-    $stmt->execute([
-        $agendamento_id,
-        $profissional_id,
-        $cliente_usuario_id,
-        $cliente_nome,
-        $cliente_telefone,
-        $data_agendamento
-    ]);
-
-    $atendimento_id = $pdo->lastInsertId();
-
-    // Adicionar serviços realizados
-    $stmt_servico = $pdo->prepare("
-        INSERT INTO servicos_realizados (
-            atendimento_id,
-            servico_id,
-            nome_servico,
-            preco,
-            preco_customizado,
-            usa_preco_customizado
-        ) SELECT ?, s.id, s.nome, s.preco, ?, ?
-        FROM servicos s
-        WHERE s.id = ?
+            servico_id
+        ) VALUES (?, ?, ?)
     ");
 
     foreach ($servicos as $servico_id) {
         $servico_id = (int)$servico_id;
-        $preco_customizado = isset($precos_customizados[$servico_id]) && !empty($precos_customizados[$servico_id])
-            ? (float)$precos_customizados[$servico_id]
-            : null;
-
-        $usa_preco_customizado = $preco_customizado !== null ? 1 : 0;
-
-        $stmt_servico->execute([
-            $atendimento_id,
-            $preco_customizado,
-            $usa_preco_customizado,
+        $stmt_item->execute([
+            $agendamento_id,
+            $profissional_id,
             $servico_id
         ]);
     }
+
+    // Armazenar preços customizados como observações se houver
+    if (!empty($precos_customizados)) {
+        $obs_precos = [];
+        foreach ($precos_customizados as $sid => $preco) {
+            if (!empty($preco)) {
+                $obs_precos[] = "Serviço ID $sid: R$ $preco (customizado)";
+            }
+        }
+        if (!empty($obs_precos)) {
+            $obs_adicional = "\n\nPreços customizados:\n" . implode("\n", $obs_precos);
+            $stmt = $pdo->prepare("UPDATE agendamentos SET observacoes = CONCAT(COALESCE(observacoes, ''), ?) WHERE id = ?");
+            $stmt->execute([$obs_adicional, $agendamento_id]);
+        }
+    }
+
+    // NOTA: Registros em 'atendimentos' e 'servicos_realizados' serão criados apenas
+    // quando o agendamento for marcado como 'finalizado' no handle_status_agendamento.php
+    // Isso garante que o profissional correto seja atribuído e receba as comissões
 
     $pdo->commit();
 

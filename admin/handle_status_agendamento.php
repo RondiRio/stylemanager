@@ -112,92 +112,101 @@ try {
     $stmt = $pdo->prepare($query);
     $stmt->execute($valores);
 
-    // Se está finalizando, criar registro de atendimento se ainda não existir
+    // Se está finalizando, criar registros de atendimento
     if ($novo_status === 'finalizado') {
-        // Verificar se já existe atendimento para este agendamento
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM atendimentos WHERE agendamento_item_id IN (SELECT id FROM agendamento_itens WHERE agendamento_id = ?)");
+        // Buscar dados do agendamento
+        $stmt = $pdo->prepare("
+            SELECT
+                a.id,
+                a.cliente_id,
+                a.cliente_rapido_id,
+                a.cliente_nome,
+                a.data_agendamento
+            FROM agendamentos a
+            WHERE a.id = ?
+        ");
         $stmt->execute([$agendamento_id]);
-        $tem_atendimento = $stmt->fetchColumn() > 0;
+        $agendamento_dados = $stmt->fetch();
 
-        // Se não tem atendimento registrado, criar um básico
-        if (!$tem_atendimento) {
-            // Buscar dados do agendamento
-            $stmt = $pdo->prepare("
-                SELECT
-                    a.id,
-                    a.cliente_id,
-                    a.profissional_id,
-                    a.data_agendamento as data,
-                    ai.id as agendamento_item_id,
-                    ai.servico_id,
-                    s.preco as valor_servico
-                FROM agendamentos a
-                LEFT JOIN agendamento_itens ai ON ai.agendamento_id = a.id
-                LEFT JOIN servicos s ON s.id = ai.servico_id
-                WHERE a.id = ?
-            ");
-            $stmt->execute([$agendamento_id]);
-            $dados = $stmt->fetch();
+        if (!$agendamento_dados) {
+            throw new Exception('Agendamento não encontrado');
+        }
 
-            if ($dados && $dados['servico_id']) {
-                // Buscar comissão do profissional
-                $stmt = $pdo->prepare("SELECT servico FROM comissoes WHERE profissional_id = ? LIMIT 1");
-                $stmt->execute([$profissional_id]);
-                $comissao_percentual = $stmt->fetchColumn() ?: 0;
-                $comissao_valor = ($dados['valor_servico'] * $comissao_percentual) / 100;
+        // Buscar itens do agendamento (serviços)
+        $stmt = $pdo->prepare("
+            SELECT
+                ai.id as agendamento_item_id,
+                ai.servico_id,
+                s.nome as servico_nome,
+                s.preco as servico_preco
+            FROM agendamento_itens ai
+            JOIN servicos s ON s.id = ai.servico_id
+            WHERE ai.agendamento_id = ?
+        ");
+        $stmt->execute([$agendamento_id]);
+        $itens = $stmt->fetchAll();
 
-                // Inserir atendimento
-                $stmt = $pdo->prepare("
-                    INSERT INTO atendimentos (
-                        agendamento_item_id,
-                        profissional_id,
-                        servico_id,
-                        cliente_id,
-                        valor_servico,
-                        comissao_servico,
-                        status,
-                        data_atendimento
-                    ) VALUES (?, ?, ?, ?, ?, ?, 'concluido', NOW())
-                ");
-                $stmt->execute([
-                    $dados['agendamento_item_id'],
-                    $profissional_id,
-                    $dados['servico_id'],
-                    $dados['cliente_id'],
-                    $dados['valor_servico'],
-                    $comissao_valor
-                ]);
+        if (empty($itens)) {
+            throw new Exception('Nenhum serviço encontrado para este agendamento');
+        }
 
-                // Também inserir em servicos_realizados
-                $atendimento_id = $pdo->lastInsertId();
+        // Buscar comissão do profissional
+        $stmt = $pdo->prepare("SELECT servico FROM comissoes WHERE profissional_id = ? LIMIT 1");
+        $stmt->execute([$profissional_id]);
+        $comissao_percentual = $stmt->fetchColumn() ?: 0;
 
-                $stmt = $pdo->prepare("
-                    SELECT nome, preco FROM servicos WHERE id = ?
-                ");
-                $stmt->execute([$dados['servico_id']]);
-                $servico = $stmt->fetch();
+        // Criar um atendimento consolidado
+        $valor_total = array_sum(array_column($itens, 'servico_preco'));
+        $comissao_total = ($valor_total * $comissao_percentual) / 100;
 
-                $stmt = $pdo->prepare("
-                    INSERT INTO servicos_realizados (
-                        atendimento_id,
-                        profissional_id,
-                        servico_id,
-                        cliente_id,
-                        nome_servico,
-                        preco,
-                        comissao
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                ");
-                $stmt->execute([
-                    $atendimento_id,
-                    $profissional_id,
-                    $dados['servico_id'],
-                    $dados['cliente_id'],
-                    $servico['nome'],
-                    $servico['preco'],
-                    $comissao_valor
-                ]);
-            }
+        $stmt = $pdo->prepare("
+            INSERT INTO atendimentos (
+                profissional_id,
+                cliente_id,
+                cliente_nome,
+                valor_servico,
+                comissao_servico,
+                status,
+                data_atendimento,
+                metodo_pagamento
+            ) VALUES (?, ?, ?, ?, ?, 'concluido', ?, 'dinheiro')
+        ");
+        $stmt->execute([
+            $profissional_id,
+            $agendamento_dados['cliente_id'],
+            $agendamento_dados['cliente_nome'],
+            $valor_total,
+            $comissao_total,
+            $agendamento_dados['data_agendamento'] . ' ' . date('H:i:s')
+        ]);
+
+        $atendimento_id = $pdo->lastInsertId();
+
+        // Inserir cada serviço em servicos_realizados
+        $stmt_servico = $pdo->prepare("
+            INSERT INTO servicos_realizados (
+                atendimento_id,
+                profissional_id,
+                servico_id,
+                cliente_id,
+                nome,
+                preco,
+                comissao
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
+
+        foreach ($itens as $item) {
+            $comissao_item = ($item['servico_preco'] * $comissao_percentual) / 100;
+
+            $stmt_servico->execute([
+                $atendimento_id,
+                $profissional_id,
+                $item['servico_id'],
+                $agendamento_dados['cliente_id'],
+                $item['servico_nome'],
+                $item['servico_preco'],
+                $comissao_item
+            ]);
         }
     }
 
