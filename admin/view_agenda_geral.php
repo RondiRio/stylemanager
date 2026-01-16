@@ -4,7 +4,7 @@ require_once '../includes/auth.php';
 require_once '../includes/db_connect.php';
 require_once '../includes/utils.php';
 $titulo = "Agenda Geral";
-requer_login('admin');
+requer_login(['admin', 'recepcionista']);
 
 $data = $_GET['data'] ?? date('Y-m-d');
 $profissional_id = $_GET['profissional_id'] ?? '';
