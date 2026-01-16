@@ -337,6 +337,28 @@
                         </a>
                     </li>
 
+                <?php elseif ($_SESSION['tipo'] === 'recepcionista'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'dashboard.php' ? 'active' : ''; ?>" href="dashboard.php">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'agendar_centralizado.php' ? 'active' : ''; ?>" href="../admin/agendar_centralizado.php">
+                            <i class="fas fa-calendar-plus"></i> Novo Agendamento
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'view_agenda_geral.php' ? 'active' : ''; ?>" href="../admin/view_agenda_geral.php">
+                            <i class="fas fa-calendar-alt"></i> Agenda Geral
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'aniversariantes.php' ? 'active' : ''; ?>" href="aniversariantes.php">
+                            <i class="fas fa-birthday-cake"></i> Aniversariantes
+                        </a>
+                    </li>
+
                 <?php elseif ($_SESSION['tipo'] === 'admin'): ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
