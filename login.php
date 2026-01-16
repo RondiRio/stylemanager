@@ -13,6 +13,7 @@ if (esta_logado()) {
     $destino = match($_SESSION['tipo']) {
         'admin' => 'admin/dashboard.php',
         'profissional' => 'profissional/dashboard.php',
+        'recepcionista' => 'recepcionista/dashboard.php',
         'cliente' => 'cliente/dashboard.php',
         default => 'index.php'
     };
@@ -66,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['ac
                 $destino = match($usuario['tipo']) {
                     'admin' => 'admin/dashboard.php',
                     'profissional' => 'profissional/dashboard.php',
+                    'recepcionista' => 'recepcionista/dashboard.php',
                     'cliente' => 'cliente/dashboard.php',
                     default => 'index.php'
                 };
