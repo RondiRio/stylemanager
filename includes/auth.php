@@ -12,10 +12,29 @@ function requer_login($tipo_necessario = null) {
         header('Location: ../login.php');
         exit;
     }
-    if ($tipo_necessario && $_SESSION['tipo'] !== $tipo_necessario) {
-        header('Location: ../login.php');
-        exit;
+    if ($tipo_necessario) {
+        // Aceita string única ou array de tipos
+        $tipos_permitidos = is_array($tipo_necessario) ? $tipo_necessario : [$tipo_necessario];
+        if (!in_array($_SESSION['tipo'], $tipos_permitidos)) {
+            header('Location: ../login.php');
+            exit;
+        }
     }
+}
+
+// Verifica se usuário tem permissão administrativa (admin ou recepcionista)
+function tem_permissao_administrativa() {
+    return esta_logado() && in_array($_SESSION['tipo'], ['admin', 'recepcionista']);
+}
+
+// Verifica se usuário é admin (permissões completas)
+function e_admin() {
+    return esta_logado() && $_SESSION['tipo'] === 'admin';
+}
+
+// Verifica se usuário é recepcionista
+function e_recepcionista() {
+    return esta_logado() && $_SESSION['tipo'] === 'recepcionista';
 }
 
 function logout() {

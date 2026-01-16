@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Fechamento de Caixa - Jessica</title>
+    <style>
+        @media print {
+            @page { margin: 1cm; }
+            body { margin: 0; }
+            .no-print { display: none !important; }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #e91e63;
+        }
+
+        .logo {
+            max-height: 80px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #e91e63;
+            margin: 10px 0;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-box table {
+            width: 100%;
+        }
+
+        .info-box td {
+            padding: 5px;
+        }
+
+        .info-box strong {
+            color: #e91e63;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #e91e63, #000000);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        table.data-table th {
+            background: #e91e63;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 12px;
+        }
+
+        table.data-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 12px;
+        }
+
+        table.data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .total-box {
+            background: #e91e63;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .total-box h2 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
+
+        .total-box .valor {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 11px;
+        }
+
+        .assinatura {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .assinatura div {
+            text-align: center;
+        }
+
+        .assinatura-linha {
+            border-top: 1px solid #333;
+            width: 200px;
+            margin: 0 auto 5px;
+        }
+
+        .no-print {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .btn {
+            background: #e91e63;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #000000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Botões de ação (não imprimem) -->
+    <div class="no-print">
+        <button class="btn" onclick="window.print()">
+            🖨️ Imprimir / Salvar PDF
+        </button>
+        <button class="btn" onclick="window.close()">
+            ✖️ Fechar
+        </button>
+    </div>
+
+    <!-- Cabeçalho -->
+    <div class="header">
+                    <img src="../../assets/img/logo.png" class="logo" alt="Logo">
+                <h1>COMPROVANTE DE FECHAMENTO DE CAIXA</h1>
+        <p style="margin: 5px 0; color: #666;">Nº 000011</p>
+    </div>
+
+    <!-- Informações do Fechamento -->
+    <div class="info-box">
+        <table>
+            <tr>
+                <td><strong>Profissional:</strong></td>
+                <td>Jessica</td>
+                <td><strong>Período:</strong></td>
+                <td>16/01/2026 a 16/01/2026</td>
+            </tr>
+            <tr>
+                <td><strong>Data Fechamento:</strong></td>
+                <td>16/01/2026 14:09</td>
+                <td><strong>Fechado por:</strong></td>
+                <td>Admin</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Comissões Detalhadas -->
+    <div class="section">
+        <div class="section-title">💰 COMISSÕES (0 atendimentos)</div>
+                    <p style="text-align: center; color: #999;">Nenhuma comissão neste período</p>
+            </div>
+
+    <!-- Gorjetas -->
+    <div class="section">
+        <div class="section-title">🎁 GORJETAS APROVADAS (0)</div>
+                    <p style="text-align: center; color: #999;">Nenhuma gorjeta neste período</p>
+            </div>
+
+    <!-- Vales -->
+    <div class="section">
+        <div class="section-title">💸 VALES APROVADOS (0)</div>
+                    <p style="text-align: center; color: #999;">Nenhum vale neste período</p>
+            </div>
+
+    <!-- Total Líquido -->
+    <div class="total-box">
+        <h2>TOTAL LÍQUIDO A RECEBER</h2>
+        <div class="valor">R$ 0,00</div>
+        <p style="margin: 15px 0 0 0; font-size: 14px;">
+            (Comissões: R$ 0,00            + Gorjetas: R$ 0,00            - Vales: R$ 0,00)
+        </p>
+    </div>
+
+    
+    <!-- Assinaturas -->
+    <div class="assinatura">
+        <div>
+            <div class="assinatura-linha"></div>
+            <p><strong>Jessica</strong><br>
+            <small>Profissional</small></p>
+        </div>
+        <div>
+            <div class="assinatura-linha"></div>
+            <p><strong>Admin</strong><br>
+            <small>Responsável</small></p>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <div class="footer">
+        <p>Documento gerado automaticamente pelo sistema em 16/01/2026 às 18:09</p>
+        <p>Este documento tem validade legal como comprovante de pagamento.</p>
+    </div>
+</body>
+</html>
+        

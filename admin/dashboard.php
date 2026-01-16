@@ -1,6 +1,6 @@
 <?php
 
-ini_set('display_errors', 0);  // Desliga exibição na tela (segurança em prod)
+// ini_set('display_errors', 0);  // Desliga exibição na tela (segurança em prod)
 ini_set('log_errors', 1);  // Ativa logging
 ini_set('error_log', __DIR__ . '/error_log.txt');  // Define um arquivo custom no mesmo dir (ou use o default do servidor)
 error_reporting(E_ALL);  // Captura todos os erros
@@ -84,7 +84,7 @@ $total_profissionais = $pdo->query("SELECT COUNT(*) FROM usuarios WHERE tipo = '
 $stmt = $pdo->prepare("
     SELECT COUNT(*) 
     FROM agendamentos 
-    WHERE data = ? AND status IN ('agendado', 'confirmado')
+    WHERE data_agendamento = ? AND status IN ('agendado', 'confirmado')
 ");
 $stmt->execute([$hoje]);
 $agendamentos_hoje = $stmt->fetchColumn();
@@ -175,13 +175,13 @@ $profissionais_mes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // ==================================================
 $stmt = $pdo->prepare("
     SELECT 
-        sr.nome,
+        sr.nome_servico,
         COUNT(*) as qtd,
         SUM(sr.preco) as valor_total
     FROM servicos_realizados sr
     JOIN atendimentos a ON a.id = sr.atendimento_id
     WHERE DATE(a.data_atendimento) = ? AND a.status = 'concluido'
-    GROUP BY sr.servico_id, sr.nome
+    GROUP BY sr.servico_id, sr.nome_servico
     ORDER BY qtd DESC
     LIMIT 5
 ");

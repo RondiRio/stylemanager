@@ -40,7 +40,7 @@
         }
         .logoMobile {
             max-width: 100%;
-            height: 40;
+            height: 40px;
         }
         
         @media (max-width: 576px) {
@@ -65,7 +65,7 @@
         
         @media (max-width: 992px) {
             .navbar-brand img {
-            height:  40  !important;
+            height: 40px !important;
             }
         }
         
@@ -316,13 +316,13 @@
                         </a>
                     </li>
                     <?php
-                    // Verificar se agendamento está ativo E se profissional pode ver agenda
-                    $config_agendamento = $pdo->query("SELECT agendamento_ativo, profissional_ve_agenda FROM configuracoes WHERE id = 1")->fetch();
-                    if ($config_agendamento && $config_agendamento['agendamento_ativo'] && ($config_agendamento['profissional_ve_agenda'] ?? 0)):
+                    // Verificar se profissional pode ver sua própria agenda
+                    $config_prof = $pdo->query("SELECT profissional_ve_propria_agenda FROM configuracoes WHERE id = 1")->fetch();
+                    if ($config_prof && ($config_prof['profissional_ve_propria_agenda'] ?? 0)):
                     ?>
                     <li class="nav-item">
-                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'view_agenda_dia.php' ? 'active' : ''; ?>" href="view_agenda_dia.php">
-                            <i class="fas fa-calendar-alt"></i> Agenda
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'view_minha_agenda.php' ? 'active' : ''; ?>" href="view_minha_agenda.php">
+                            <i class="fas fa-calendar-alt"></i> Minha Agenda
                         </a>
                     </li>
                     <?php endif; ?>
@@ -365,13 +365,30 @@
                     </li>
                     <?php
                     // Verificar se agendamento está ativo para mostrar agenda
-                    $config_agend = $pdo->query("SELECT agendamento_ativo FROM configuracoes WHERE id = 1")->fetch();
+                    $config_agend = $pdo->query("SELECT agendamento_ativo, agenda_centralizada_ativa, lembrar_aniversarios FROM configuracoes WHERE id = 1")->fetch();
                     if ($config_agend && $config_agend['agendamento_ativo']):
                     ?>
-                    <li class="nav-item">
-                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'view_agenda_geral.php' ? 'active' : ''; ?>" href="view_agenda_geral.php">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-calendar-week"></i> Agenda
                         </a>
+                        <ul class="dropdown-menu animate-fade-in-up">
+                            <li><a class="dropdown-item" href="view_agenda_geral.php">
+                                <i class="fas fa-calendar-alt me-2"></i>Agenda Geral
+                            </a></li>
+                            <?php if ($config_agend['agenda_centralizada_ativa']): ?>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="agendar_centralizado.php">
+                                <i class="fas fa-calendar-plus me-2"></i>Novo Agendamento
+                            </a></li>
+                            <?php endif; ?>
+                            <?php if ($config_agend['lembrar_aniversarios'] ?? 1): ?>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="aniversariantes.php">
+                                <i class="fas fa-birthday-cake me-2"></i>Aniversariantes
+                            </a></li>
+                            <?php endif; ?>
+                        </ul>
                     </li>
                     <?php endif; ?>
                     <li class="nav-item">
@@ -418,7 +435,59 @@
         <li><a class="dropdown-item text-danger" href="../logout.php">Sair</a></li>
     </ul>
                 </li>
-                    
+
+                <?php elseif ($_SESSION['tipo'] === 'recepcionista'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'dashboard.php' ? 'active' : ''; ?>" href="dashboard.php">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <?php
+                    // Verificar se agendamento está ativo para mostrar agenda
+                    $config_recep = $pdo->query("SELECT agendamento_ativo, agenda_centralizada_ativa, lembrar_aniversarios FROM configuracoes WHERE id = 1")->fetch();
+                    if ($config_recep && $config_recep['agendamento_ativo']):
+                    ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-calendar-week"></i> Agenda
+                        </a>
+                        <ul class="dropdown-menu animate-fade-in-up">
+                            <li><a class="dropdown-item" href="view_agenda_geral.php">
+                                <i class="fas fa-calendar-alt me-2"></i>Agenda Geral
+                            </a></li>
+                            <?php if ($config_recep['agenda_centralizada_ativa']): ?>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="agendar_centralizado.php">
+                                <i class="fas fa-calendar-plus me-2"></i>Novo Agendamento
+                            </a></li>
+                            <?php endif; ?>
+                            <?php if ($config_recep['lembrar_aniversarios'] ?? 1): ?>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="aniversariantes.php">
+                                <i class="fas fa-birthday-cake me-2"></i>Aniversariantes
+                            </a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                    <?php endif; ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> <?php echo explode(' ', $_SESSION['nome'])[0]; ?>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="dashboard.php">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="configuracoes.php">Meu Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-primary" href="alterar_senha.php">
+                                    <i class="fas fa-key me-2"></i>Alterar Senha
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="../logout.php">Sair</a></li>
+                        </ul>
+                    </li>
+
                 <?php endif; ?>
             </ul>
             <!-- No menu dropdown do admin, adicione: -->
