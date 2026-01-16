@@ -38,6 +38,8 @@ if ($_POST) {
     $mostrar_landing_page = isset($_POST['mostrar_landing_page']) ? 1 : 0;
     $agenda_centralizada_ativa = isset($_POST['agenda_centralizada_ativa']) ? 1 : 0;
     $lembrar_aniversarios = isset($_POST['lembrar_aniversarios']) ? 1 : 0;
+    $agendamento_sem_profissional = isset($_POST['agendamento_sem_profissional']) ? 1 : 0;
+    $profissional_ve_propria_agenda = isset($_POST['profissional_ve_propria_agenda']) ? 1 : 0;
 
     // Upload de logo
     if (!empty($_FILES['logo']['name'])) {
@@ -47,8 +49,8 @@ if ($_POST) {
         $pdo->prepare("UPDATE configuracoes SET logo = ? WHERE id = 1")->execute([$nome]);
     }
 
-    $pdo->prepare("UPDATE configuracoes SET tipo_empresa=?, cor_primaria=?, cor_secundaria=?, cor_fundo=?, horario_abertura=?, horario_fechamento=?, intervalo_slot=?, prazo_cancelamento_horas=?, agendamento_ativo=?, profissional_ve_agenda=?, funciona_domingo=?, funciona_segunda=?, funciona_terca=?, funciona_quarta=?, funciona_quinta=?, funciona_sexta=?, funciona_sabado=?, tipo_fechamento=?, gorjetas_requerem_aprovacao=?, permitir_cadastro_cliente=?, mostrar_landing_page=?, agenda_centralizada_ativa=?, lembrar_aniversarios=? WHERE id=1")
-        ->execute([$tipo, $primaria, $secundaria, $fundo, $abertura, $fechamento, $intervalo, $prazo, $agendamento_ativo, $profissional_ve_agenda, $funciona_domingo, $funciona_segunda, $funciona_terca, $funciona_quarta, $funciona_quinta, $funciona_sexta, $funciona_sabado, $tipo_fechamento, $gorjetas_requerem_aprovacao, $permitir_cadastro_cliente, $mostrar_landing_page, $agenda_centralizada_ativa, $lembrar_aniversarios]);
+    $pdo->prepare("UPDATE configuracoes SET tipo_empresa=?, cor_primaria=?, cor_secundaria=?, cor_fundo=?, horario_abertura=?, horario_fechamento=?, intervalo_slot=?, prazo_cancelamento_horas=?, agendamento_ativo=?, profissional_ve_agenda=?, funciona_domingo=?, funciona_segunda=?, funciona_terca=?, funciona_quarta=?, funciona_quinta=?, funciona_sexta=?, funciona_sabado=?, tipo_fechamento=?, gorjetas_requerem_aprovacao=?, permitir_cadastro_cliente=?, mostrar_landing_page=?, agenda_centralizada_ativa=?, lembrar_aniversarios=?, agendamento_sem_profissional=?, profissional_ve_propria_agenda=? WHERE id=1")
+        ->execute([$tipo, $primaria, $secundaria, $fundo, $abertura, $fechamento, $intervalo, $prazo, $agendamento_ativo, $profissional_ve_agenda, $funciona_domingo, $funciona_segunda, $funciona_terca, $funciona_quarta, $funciona_quinta, $funciona_sexta, $funciona_sabado, $tipo_fechamento, $gorjetas_requerem_aprovacao, $permitir_cadastro_cliente, $mostrar_landing_page, $agenda_centralizada_ativa, $lembrar_aniversarios, $agendamento_sem_profissional, $profissional_ve_propria_agenda]);
 
     redirecionar_com_mensagem('configuracoes.php', 'Configurações salvas!');
 }
@@ -290,6 +292,36 @@ include '../includes/header.php';
                             <strong>Lembretes de aniversário</strong>
                             <br>
                             <small class="text-muted">Sistema notificará sobre aniversariantes do dia/mês.</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-user-tag me-1"></i><strong>Agendamento Sem Profissional</strong>
+                    </label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="agendamento_sem_profissional" id="agendamento_sem_profissional" <?php echo ($config['agendamento_sem_profissional'] ?? 0) ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="agendamento_sem_profissional">
+                            <strong>Permitir agendamento genérico</strong>
+                            <br>
+                            <small class="text-muted">Quando ativo, não é obrigatório selecionar profissional específico. Cliente será atendido por quem estiver disponível.</small>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-eye me-1"></i><strong>Agenda do Profissional</strong>
+                    </label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="profissional_ve_propria_agenda" id="profissional_ve_propria_agenda" <?php echo ($config['profissional_ve_propria_agenda'] ?? 0) ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="profissional_ve_propria_agenda">
+                            <strong>Profissional pode visualizar sua agenda</strong>
+                            <br>
+                            <small class="text-muted">Quando ativo, profissionais podem ver seus agendamentos, mas SEM poder registrar atendimentos.</small>
                         </label>
                     </div>
                 </div>

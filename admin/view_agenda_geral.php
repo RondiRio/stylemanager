@@ -8,6 +8,7 @@ requer_login('admin');
 
 $data = $_GET['data'] ?? date('Y-m-d');
 $profissional_id = $_GET['profissional_id'] ?? '';
+$busca_cliente = $_GET['busca_cliente'] ?? '';
 
 // Buscar todos os profissionais
 $profissionais = $pdo->query("SELECT id, nome FROM usuarios WHERE tipo = 'profissional' AND ativo = 1 ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
@@ -42,6 +43,15 @@ $params = [$data];
 if (!empty($profissional_id)) {
     $query .= " AND a.profissional_id = ?";
     $params[] = $profissional_id;
+}
+
+if (!empty($busca_cliente)) {
+    $query .= " AND (u.nome LIKE ? OR u.telefone LIKE ? OR a.cliente_nome LIKE ? OR a.cliente_telefone LIKE ?)";
+    $termo_busca = "%{$busca_cliente}%";
+    $params[] = $termo_busca;
+    $params[] = $termo_busca;
+    $params[] = $termo_busca;
+    $params[] = $termo_busca;
 }
 
 $query .= " GROUP BY a.id ORDER BY a.hora_inicio";
@@ -88,6 +98,14 @@ include '../includes/header.php';
                 </div>
                 <div class="col-md-6">
                     <form method="GET" class="row g-2 justify-content-md-end mt-3 mt-md-0">
+                        <div class="col-12 mb-2">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" name="busca_cliente" class="form-control"
+                                       placeholder="Buscar cliente por nome ou telefone..."
+                                       value="<?php echo htmlspecialchars($busca_cliente); ?>">
+                            </div>
+                        </div>
                         <div class="col-auto">
                             <select name="profissional_id" class="form-select">
                                 <option value="">Todos os Profissionais</option>
@@ -107,9 +125,9 @@ include '../includes/header.php';
                             </button>
                         </div>
                         <div class="col-auto">
-                            <button type="button" class="btn btn-outline-secondary" onclick="location.href='?data=' + new Date().toISOString().split('T')[0]">
+                            <a href="?data=<?php echo date('Y-m-d'); ?>" class="btn btn-outline-secondary">
                                 <i class="fas fa-calendar-day"></i> Hoje
-                            </button>
+                            </a>
                         </div>
                     </form>
                 </div>

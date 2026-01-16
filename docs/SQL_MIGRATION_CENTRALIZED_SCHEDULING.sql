@@ -26,7 +26,9 @@ ALTER TABLE configuracoes
 ADD COLUMN permitir_cadastro_cliente TINYINT(1) DEFAULT 1 COMMENT 'Permite clientes se cadastrarem no sistema',
 ADD COLUMN mostrar_landing_page TINYINT(1) DEFAULT 1 COMMENT 'Mostra landing page para novos visitantes',
 ADD COLUMN agenda_centralizada_ativa TINYINT(1) DEFAULT 1 COMMENT 'Ativa agenda centralizada para admin/recepcionista',
-ADD COLUMN lembrar_aniversarios TINYINT(1) DEFAULT 1 COMMENT 'Sistema de lembretes de aniversário ativo';
+ADD COLUMN lembrar_aniversarios TINYINT(1) DEFAULT 1 COMMENT 'Sistema de lembretes de aniversário ativo',
+ADD COLUMN agendamento_sem_profissional TINYINT(1) DEFAULT 0 COMMENT 'Permite agendamento sem especificar profissional',
+ADD COLUMN profissional_ve_propria_agenda TINYINT(1) DEFAULT 0 COMMENT 'Profissional pode visualizar sua própria agenda';
 
 -- 5. Adicionar campo para preço customizado nos serviços realizados
 ALTER TABLE servicos_realizados

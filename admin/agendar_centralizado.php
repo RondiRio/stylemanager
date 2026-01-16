@@ -9,12 +9,14 @@ require_once '../includes/utils.php';
 requer_login(['admin', 'recepcionista']);
 
 // Verificar se agenda centralizada está ativa
-$config = $pdo->query("SELECT agenda_centralizada_ativa FROM configuracoes WHERE id = 1")->fetch();
+$config = $pdo->query("SELECT agenda_centralizada_ativa, agendamento_sem_profissional FROM configuracoes WHERE id = 1")->fetch();
 if (!$config || !$config['agenda_centralizada_ativa']) {
     $_SESSION['flash'] = ['tipo' => 'warning', 'msg' => 'Agenda centralizada não está ativa. Ative nas configurações.'];
     header('Location: configuracoes.php');
     exit;
 }
+
+$permite_sem_profissional = $config['agendamento_sem_profissional'] ?? 0;
 
 // Buscar profissionais ativos
 $profissionais = $pdo->query("
@@ -167,15 +169,27 @@ $servicos = $pdo->query("
                     <!-- Profissional -->
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <h5 class="mb-3"><i class="fas fa-user-tie me-2"></i>2. Profissional</h5>
-                            <select class="form-select form-select-lg" id="profissionalId" name="profissional_id" required>
-                                <option value="">Selecione um profissional</option>
+                            <h5 class="mb-3">
+                                <i class="fas fa-user-tie me-2"></i>2. Profissional
+                                <?php if ($permite_sem_profissional): ?>
+                                    <small class="text-muted">(Opcional)</small>
+                                <?php endif; ?>
+                            </h5>
+                            <select class="form-select form-select-lg" id="profissionalId" name="profissional_id" <?php echo !$permite_sem_profissional ? 'required' : ''; ?>>
+                                <option value="">
+                                    <?php echo $permite_sem_profissional ? 'Nenhum (primeiro disponível)' : 'Selecione um profissional'; ?>
+                                </option>
                                 <?php foreach ($profissionais as $prof): ?>
                                     <option value="<?php echo $prof['id']; ?>">
                                         <?php echo htmlspecialchars($prof['nome']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+                            <?php if ($permite_sem_profissional): ?>
+                                <small class="text-muted mt-1 d-block">
+                                    <i class="fas fa-info-circle me-1"></i>Deixe vazio para atender com qualquer profissional disponível
+                                </small>
+                            <?php endif; ?>
                         </div>
 
                         <!-- Data e Hora -->

@@ -19,12 +19,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Receber dados
 $cliente_id = $_POST['cliente_id'] ?? null;
 $cliente_tipo = $_POST['cliente_tipo'] ?? null;
-$profissional_id = (int)($_POST['profissional_id'] ?? 0);
+$profissional_id = !empty($_POST['profissional_id']) ? (int)$_POST['profissional_id'] : null;
 $data_agendamento = $_POST['data_agendamento'] ?? '';
 $hora_agendamento = $_POST['hora_agendamento'] ?? '';
 $servicos = $_POST['servicos'] ?? [];
 $precos_customizados = $_POST['preco_customizado'] ?? [];
 $observacoes = trim($_POST['observacoes'] ?? '');
+
+// Buscar configuração para ver se permite agendamento sem profissional
+$config = $pdo->query("SELECT agendamento_sem_profissional FROM configuracoes WHERE id = 1")->fetch();
+$permite_sem_profissional = $config['agendamento_sem_profissional'] ?? 0;
 
 // Validações
 if (!$cliente_id || !$cliente_tipo) {
@@ -32,7 +36,7 @@ if (!$cliente_id || !$cliente_tipo) {
     exit;
 }
 
-if (!$profissional_id) {
+if (!$profissional_id && !$permite_sem_profissional) {
     echo json_encode(['success' => false, 'error' => 'Profissional não selecionado']);
     exit;
 }
@@ -90,20 +94,22 @@ try {
         $cliente_rapido_id = $cliente_id;
     }
 
-    // Verificar se profissional está disponível neste horário
-    $stmt = $pdo->prepare("
-        SELECT COUNT(*) as total
-        FROM agendamentos
-        WHERE profissional_id = ?
-          AND data_agendamento = ?
-          AND hora_agendamento = ?
-          AND status != 'cancelado'
-    ");
-    $stmt->execute([$profissional_id, $data_agendamento, $hora_agendamento]);
-    $conflito = $stmt->fetch();
+    // Verificar se profissional está disponível neste horário (apenas se profissional foi especificado)
+    if ($profissional_id) {
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) as total
+            FROM agendamentos
+            WHERE profissional_id = ?
+              AND data_agendamento = ?
+              AND hora_agendamento = ?
+              AND status != 'cancelado'
+        ");
+        $stmt->execute([$profissional_id, $data_agendamento, $hora_agendamento]);
+        $conflito = $stmt->fetch();
 
-    if ($conflito['total'] > 0) {
-        throw new Exception('Profissional já possui agendamento neste horário');
+        if ($conflito['total'] > 0) {
+            throw new Exception('Profissional já possui agendamento neste horário');
+        }
     }
 
     // Criar agendamento
