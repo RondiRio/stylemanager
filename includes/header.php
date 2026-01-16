@@ -316,13 +316,13 @@
                         </a>
                     </li>
                     <?php
-                    // Verificar se agendamento está ativo E se profissional pode ver agenda
-                    $config_agendamento = $pdo->query("SELECT agendamento_ativo, profissional_ve_agenda FROM configuracoes WHERE id = 1")->fetch();
-                    if ($config_agendamento && $config_agendamento['agendamento_ativo'] && ($config_agendamento['profissional_ve_agenda'] ?? 0)):
+                    // Verificar se profissional pode ver sua própria agenda
+                    $config_prof = $pdo->query("SELECT profissional_ve_propria_agenda FROM configuracoes WHERE id = 1")->fetch();
+                    if ($config_prof && ($config_prof['profissional_ve_propria_agenda'] ?? 0)):
                     ?>
                     <li class="nav-item">
-                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'view_agenda_dia.php' ? 'active' : ''; ?>" href="view_agenda_dia.php">
-                            <i class="fas fa-calendar-alt"></i> Agenda
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'view_minha_agenda.php' ? 'active' : ''; ?>" href="view_minha_agenda.php">
+                            <i class="fas fa-calendar-alt"></i> Minha Agenda
                         </a>
                     </li>
                     <?php endif; ?>
